@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>كيفية تربية أطفالك وفقاً للتقاليد الإسلامية</title>
 <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 
 
 <style>
@@ -869,40 +869,43 @@
   // ── Generate ticket & QR ──
   function generateTicket() {
     const ticketId = 'TKT-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,4).toUpperCase();
-    const ticketData = { ...formData, ticketId, paid: true, event: 'Islamic Parenting 2026', timestamp: new Date().toISOString() };
 
-    // Save to localStorage
-    const tickets = JSON.parse(localStorage.getItem('event_tickets') || '{}');
-    tickets[ticketId] = ticketData;
-    localStorage.setItem('event_tickets', JSON.stringify(tickets));
-
-    // Show QR section
+    // Show QR section first
     setStep(3);
     showSection('qr-section');
-
     document.getElementById('ticket-id').textContent = ticketId;
 
-    // Generate QR — embed ALL data directly so scanner works on any device
-    document.getElementById('qrcode').innerHTML = '';
-    const qrPayload = JSON.stringify({
+    // Build URL with all attendee data as params
+    // When scanned by native camera → opens scanner.html with attendee info
+    const baseUrl = 'https://walidabbas27.github.io/osra/scanner.html';
+    const params = new URLSearchParams({
       id: ticketId,
       name: formData.fname + ' ' + formData.lname,
       email: formData.email,
       phone: formData.phone,
       city: formData.city || '',
-      event: 'تربية الأطفال إسلامياً',
-      date: '15 مايو 2026',
-      paid: true
+      paid: 'true'
     });
-    new QRCode(document.getElementById('qrcode'), {
-      text: qrPayload,
-      width: 220, height: 220,
-      colorDark: '#0D3B2E', colorLight: '#FFFFFF',
-      correctLevel: QRCode.CorrectLevel.L
-    });
+    const ticketUrl = baseUrl + '?' + params.toString();
+
+    // Generate QR with the URL
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(ticketUrl)}&margin=10`;
+
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = '';
+    const img = document.createElement('img');
+    img.src = qrUrl;
+    img.width = 220;
+    img.height = 220;
+    img.style.borderRadius = '8px';
+    img.alt = 'QR Code';
+    img.id = 'qr-img';
+    img.onerror = () => {
+      qrContainer.innerHTML = '<p style="color:red;font-size:0.8rem;">تعذر تحميل رمز QR، تحقق من اتصالك بالإنترنت</p>';
+    };
+    qrContainer.appendChild(img);
 
     // Attendee summary
-    const children_map = {'':'—','0':'لا أطفال','1':'طفل واحد','2':'طفلان','3':'٣ أطفال','4+':'٤+'}
     document.getElementById('attendee-summary').innerHTML = `
       <div class="row"><span class="k">الاسم الكامل</span><span class="v">${formData.fname} ${formData.lname}</span></div>
       <div class="row"><span class="k">البريد الإلكتروني</span><span class="v" style="direction:ltr;text-align:left">${formData.email}</span></div>
@@ -914,70 +917,57 @@
 
   // ── Download QR ──
   function downloadQR() {
-    // Wait a moment to ensure QR is fully rendered
-    setTimeout(() => {
-      const canvas = document.querySelector('#qrcode canvas');
-      if(!canvas) {
-        alert('الرجاء الانتظار ثوانٍ ثم حاول مجدداً');
-        return;
-      }
+    const img = document.getElementById('qr-img');
+    if(!img) { alert('الرجاء الانتظار حتى يتم تحميل رمز QR'); return; }
 
-      const ticketId = document.getElementById('ticket-id').textContent;
-      const fullName = formData.fname + ' ' + formData.lname;
+    // Draw onto canvas then download
+    const dl = document.createElement('canvas');
+    dl.width = 320; dl.height = 420;
+    const ctx = dl.getContext('2d');
 
-      const dl = document.createElement('canvas');
-      dl.width = 320; dl.height = 420;
-      const ctx = dl.getContext('2d');
+    // White background
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, 320, 420);
 
-      // White background
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, 320, 420);
+    // Green header
+    ctx.fillStyle = '#0D3B2E';
+    ctx.fillRect(0, 0, 320, 55);
+    ctx.fillStyle = '#C9A84C';
+    ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Islamic Parenting Event — 2026', 160, 25);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '11px Arial';
+    ctx.fillText('Hamburg — 15 May 2026 — 15:00', 160, 45);
 
-      // Green header bar
-      ctx.fillStyle = '#0D3B2E';
-      ctx.fillRect(0, 0, 320, 55);
+    // Draw QR image
+    ctx.drawImage(img, 50, 65, 220, 220);
 
-      // Header text (LTR safe — use simple latin fallback for canvas)
-      ctx.fillStyle = '#C9A84C';
-      ctx.font = 'bold 13px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('Islamic Parenting Event — 2026', 160, 25);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.font = '11px Arial';
-      ctx.fillText('Hamburg — 15 May 2026 — 15:00', 160, 45);
+    // Divider
+    ctx.strokeStyle = '#EEEEEE';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(20, 300); ctx.lineTo(300, 300);
+    ctx.stroke();
 
-      // Draw QR code in center
-      ctx.drawImage(canvas, 50, 70, 220, 220);
+    // Attendee info
+    const fullName = formData.fname + ' ' + formData.lname;
+    const ticketId = document.getElementById('ticket-id').textContent;
+    ctx.fillStyle = '#333333';
+    ctx.font = 'bold 13px Arial';
+    ctx.fillText(fullName, 160, 325);
+    ctx.font = '11px Arial';
+    ctx.fillStyle = '#666666';
+    ctx.fillText(formData.email, 160, 345);
+    ctx.fillText(formData.phone, 160, 363);
+    ctx.fillStyle = '#999999';
+    ctx.font = '9px monospace';
+    ctx.fillText(ticketId, 160, 395);
 
-      // Divider
-      ctx.strokeStyle = '#EEEEEE';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(20, 305); ctx.lineTo(300, 305);
-      ctx.stroke();
-
-      // Attendee info (ASCII-safe)
-      ctx.fillStyle = '#333333';
-      ctx.font = 'bold 13px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(fullName, 160, 330);
-
-      ctx.font = '11px Arial';
-      ctx.fillStyle = '#666666';
-      ctx.fillText(formData.email, 160, 350);
-      ctx.fillText(formData.phone, 160, 368);
-
-      // Ticket ID
-      ctx.fillStyle = '#999999';
-      ctx.font = '10px monospace';
-      ctx.fillText(ticketId, 160, 400);
-
-      // Download
-      const a = document.createElement('a');
-      a.download = 'ticket-' + ticketId + '.png';
-      a.href = dl.toDataURL('image/png');
-      a.click();
-    }, 500);
+    const a = document.createElement('a');
+    a.download = 'ticket-' + ticketId + '.png';
+    a.href = dl.toDataURL('image/png');
+    a.click();
   }
 </script>
 

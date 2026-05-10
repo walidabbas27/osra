@@ -3,10 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ماسح التذاكر — فحص الدخول</title>
+<title>فحص التذكرة</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
-
 <style>
   :root {
     --gold: #C9A84C;
@@ -15,535 +13,213 @@
     --green-light: #2E7D55;
     --cream: #F9F3E8;
     --red: #E53935;
-    --red-light: #FFEBEE;
   }
-
   * { margin:0; padding:0; box-sizing:border-box; }
-
-  body {
-    font-family: 'Tajawal', sans-serif;
-    background: var(--green-deep);
-    color: var(--cream);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  header {
-    background: rgba(13,59,46,0.95);
-    border-bottom: 1px solid rgba(201,168,76,0.2);
-    padding: 16px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    backdrop-filter: blur(10px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  header h1 {
-    font-family: 'Amiri', serif;
-    font-size: 1.2rem;
-    color: var(--gold);
-  }
-
-  .scan-count {
-    background: rgba(201,168,76,0.15);
-    border: 1px solid rgba(201,168,76,0.3);
-    border-radius: 50px;
-    padding: 6px 16px;
-    font-size: 0.8rem;
-    color: var(--gold);
-  }
-
-  .main {
-    flex: 1;
-    padding: 24px 20px;
-    max-width: 500px;
-    margin: 0 auto;
-    width: 100%;
-  }
-
-  /* ── Camera ── */
-  .camera-wrap {
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    border: 2px solid rgba(201,168,76,0.3);
-    background: #000;
-    aspect-ratio: 1;
-    margin-bottom: 20px;
-  }
-
-  #video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-  }
-
-  #canvas { display: none; }
-
-  .scan-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-
-  .scan-frame {
-    width: 60%;
-    aspect-ratio: 1;
-    position: relative;
-  }
-
-  .scan-frame::before, .scan-frame::after,
-  .scan-frame span::before, .scan-frame span::after {
-    content: '';
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    border-color: var(--gold);
-    border-style: solid;
-  }
-
-  .scan-frame::before { top:0; right:0; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
-  .scan-frame::after  { bottom:0; right:0; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
-  .scan-frame span::before { top:0; left:0; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
-  .scan-frame span::after  { bottom:0; left:0; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
-
-  .scan-line {
-    position: absolute;
-    left: 5%;
-    right: 5%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    animation: scanMove 2s ease-in-out infinite;
-    top: 0;
-  }
-
-  @keyframes scanMove {
-    0% { top: 5%; }
-    50% { top: 95%; }
-    100% { top: 5%; }
-  }
-
-  .camera-status {
-    position: absolute;
-    bottom: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.7);
-    border-radius: 50px;
-    padding: 6px 16px;
-    font-size: 0.78rem;
-    white-space: nowrap;
-    color: rgba(255,255,255,0.8);
-  }
-
-  /* ── Buttons ── */
-  .btn-start {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, #8B6914, var(--gold));
-    border: none;
-    border-radius: 14px;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--green-deep);
-    cursor: pointer;
-    margin-bottom: 16px;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-
-  .btn-start:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
-
-  /* ── Result card ── */
-  .result-card {
-    border-radius: 16px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
-    display: none;
-    animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
-  }
-
-  @keyframes popIn {
-    from { opacity:0; transform:scale(0.85); }
-    to { opacity:1; transform:scale(1); }
-  }
-
-  .result-card.valid {
-    background: rgba(46,125,85,0.2);
-    border: 2px solid var(--green-light);
-  }
-
-  .result-card.invalid {
-    background: rgba(229,57,53,0.15);
-    border: 2px solid var(--red);
-  }
-
-  .result-card.already {
-    background: rgba(201,168,76,0.1);
-    border: 2px solid rgba(201,168,76,0.4);
-  }
-
-  .result-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-  }
-
-  .result-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-    flex-shrink: 0;
-  }
-
-  .valid .result-icon { background: var(--green-light); }
-  .invalid .result-icon { background: var(--red); }
-  .already .result-icon { background: rgba(201,168,76,0.3); }
-
-  .result-title { font-size: 1.1rem; font-weight: 700; }
-  .valid .result-title { color: #A5D6A7; }
-  .invalid .result-title { color: #EF9A9A; }
-  .already .result-title { color: var(--gold); }
-
-  .result-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    font-size: 0.88rem;
-  }
-
-  .result-row:last-child { border-bottom: none; }
-  .result-row .k { color: rgba(249,243,232,0.5); }
-  .result-row .v { color: var(--cream); font-weight: 600; }
-
-  /* ── Stats ── */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-
-  .stat-box {
-    background: rgba(249,243,232,0.05);
-    border: 1px solid rgba(201,168,76,0.15);
-    border-radius: 12px;
-    padding: 14px 10px;
-    text-align: center;
-  }
-
-  .stat-box .num {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: var(--gold);
-    line-height: 1;
-  }
-
-  .stat-box .lbl {
-    font-size: 0.72rem;
-    color: rgba(249,243,232,0.5);
-    margin-top: 4px;
-  }
-
-  /* ── Attendees list ── */
-  .section-title {
-    font-family: 'Amiri', serif;
-    color: var(--gold);
-    font-size: 1rem;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, rgba(201,168,76,0.3), transparent);
-  }
-
-  .attendee-list { display: flex; flex-direction: column; gap: 8px; }
-
-  .attendee-item {
-    background: rgba(249,243,232,0.04);
-    border: 1px solid rgba(201,168,76,0.1);
-    border-radius: 10px;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.85rem;
-  }
-
-  .attendee-item .name { font-weight: 600; color: var(--cream); }
-  .attendee-item .time { font-size: 0.72rem; color: rgba(249,243,232,0.4); margin-top: 2px; }
-
-  .badge {
-    font-size: 0.7rem;
-    padding: 3px 10px;
-    border-radius: 50px;
-    font-weight: 700;
-  }
-
-  .badge.checked { background: var(--green-light); color: white; }
-  .badge.pending { background: rgba(201,168,76,0.2); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
-
-  .empty-state {
-    text-align: center;
-    padding: 32px;
-    color: rgba(249,243,232,0.3);
-    font-size: 0.9rem;
-  }
+  body { font-family:'Tajawal',sans-serif; background:var(--green-deep); color:var(--cream); min-height:100vh; }
+  header { background:rgba(13,59,46,0.95); border-bottom:1px solid rgba(201,168,76,0.2); padding:16px 24px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:10; }
+  header h1 { font-family:'Amiri',serif; font-size:1.2rem; color:var(--gold); }
+  .scan-count { background:rgba(201,168,76,0.15); border:1px solid rgba(201,168,76,0.3); border-radius:50px; padding:6px 16px; font-size:0.8rem; color:var(--gold); }
+  .main { padding:24px 20px; max-width:500px; margin:0 auto; }
+  .stats { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:24px; }
+  .stat-box { background:rgba(249,243,232,0.05); border:1px solid rgba(201,168,76,0.15); border-radius:12px; padding:16px; text-align:center; }
+  .stat-box .num { font-size:2rem; font-weight:800; color:var(--gold); line-height:1; }
+  .stat-box .lbl { font-size:0.75rem; color:rgba(249,243,232,0.5); margin-top:4px; }
+  .result-card { border-radius:20px; padding:28px 24px; margin-bottom:20px; display:none; animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+  .result-card.valid { background:rgba(46,125,85,0.2); border:2px solid var(--green-light); }
+  .result-card.invalid { background:rgba(229,57,53,0.15); border:2px solid var(--red); }
+  .result-card.already { background:rgba(201,168,76,0.1); border:2px solid rgba(201,168,76,0.4); }
+  .result-header { display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .result-icon { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0; }
+  .valid .result-icon { background:var(--green-light); }
+  .invalid .result-icon { background:var(--red); }
+  .already .result-icon { background:rgba(201,168,76,0.3); }
+  .result-title { font-size:1.2rem; font-weight:800; }
+  .valid .result-title { color:#A5D6A7; }
+  .invalid .result-title { color:#EF9A9A; }
+  .already .result-title { color:var(--gold); }
+  .result-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:0.9rem; }
+  .result-row:last-child { border-bottom:none; }
+  .result-row .k { color:rgba(249,243,232,0.5); }
+  .result-row .v { color:var(--cream); font-weight:600; direction:ltr; text-align:left; }
+  .btn-next { width:100%; margin-top:20px; padding:14px; background:rgba(201,168,76,0.15); border:1.5px solid var(--gold); border-radius:12px; font-family:'Tajawal',sans-serif; font-size:1rem; font-weight:700; color:var(--gold); cursor:pointer; }
+  .instruction { background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.2); border-radius:16px; padding:24px; margin-bottom:20px; }
+  .instruction .icon { font-size:3rem; margin-bottom:12px; text-align:center; }
+  .instruction h2 { font-family:'Amiri',serif; color:var(--gold); font-size:1.2rem; margin-bottom:16px; text-align:center; }
+  .step-item { display:flex; align-items:flex-start; gap:10px; font-size:0.9rem; color:rgba(249,243,232,0.8); margin-bottom:12px; line-height:1.6; }
+  .step-num { background:var(--gold); color:var(--green-deep); border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:800; flex-shrink:0; margin-top:2px; }
+  .section-title { font-family:'Amiri',serif; color:var(--gold); font-size:1rem; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
+  .section-title::after { content:''; flex:1; height:1px; background:linear-gradient(90deg,rgba(201,168,76,0.3),transparent); }
+  .attendee-list { display:flex; flex-direction:column; gap:8px; }
+  .attendee-item { background:rgba(249,243,232,0.04); border:1px solid rgba(201,168,76,0.1); border-radius:10px; padding:12px 16px; display:flex; justify-content:space-between; align-items:center; }
+  .attendee-item .name { font-weight:600; color:var(--cream); font-size:0.9rem; }
+  .attendee-item .time { font-size:0.72rem; color:rgba(249,243,232,0.4); margin-top:2px; }
+  .badge { font-size:0.7rem; padding:4px 12px; border-radius:50px; font-weight:700; }
+  .badge.checked { background:var(--green-light); color:white; }
+  .empty-state { text-align:center; padding:32px; color:rgba(249,243,232,0.3); font-size:0.9rem; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>🔍 ماسح التذاكر</h1>
+  <h1>🎟 فحص التذاكر</h1>
   <div class="scan-count" id="scan-count">0 دخول</div>
 </header>
 
 <div class="main">
 
-  <!-- Stats -->
   <div class="stats">
-    <div class="stat-box">
-      <div class="num" id="stat-total">0</div>
-      <div class="lbl">إجمالي المسجلين</div>
-    </div>
     <div class="stat-box">
       <div class="num" id="stat-checked">0</div>
       <div class="lbl">تم الدخول</div>
     </div>
     <div class="stat-box">
-      <div class="num" id="stat-pending">0</div>
-      <div class="lbl">لم يصلوا بعد</div>
+      <div class="num" id="stat-total">0</div>
+      <div class="lbl">إجمالي المسح</div>
     </div>
   </div>
 
-  <!-- Camera -->
-  <div class="camera-wrap">
-    <video id="video" playsinline autoplay muted></video>
-    <canvas id="canvas"></canvas>
-    <div class="scan-overlay">
-      <div class="scan-frame">
-        <span></span>
-        <div class="scan-line"></div>
-      </div>
-    </div>
-    <div class="camera-status" id="cam-status">اضغط "تشغيل الكاميرا" للبدء</div>
-  </div>
-
-  <button class="btn-start" id="start-btn" onclick="startCamera()">📷 تشغيل الكاميرا للمسح</button>
-
-  <!-- Result -->
+  <!-- Result shown after QR scan -->
   <div class="result-card" id="result-card">
     <div class="result-header">
       <div class="result-icon" id="result-icon"></div>
       <div class="result-title" id="result-title"></div>
     </div>
     <div id="result-details"></div>
+    <button class="btn-next" onclick="clearResult()">📷 مسح التذكرة التالية</button>
   </div>
 
-  <!-- Attendees list -->
-  <div class="section-title">✦ قائمة الحضور</div>
+  <!-- Instructions shown normally -->
+  <div class="instruction" id="instruction-box">
+    <div class="icon">📱</div>
+    <h2>طريقة مسح التذاكر</h2>
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <span>افتح <strong>كاميرا هاتفك العادية</strong> (ليس متصفح الإنترنت)</span>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <span>وجّه الكاميرا نحو <strong>رمز QR</strong> الخاص بالحاضر</span>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <span>اضغط على <strong>الرابط</strong> الذي يظهر تلقائياً</span>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <span>ستنفتح هذه الصفحة مع <strong>بيانات الحاضر</strong> كاملة ✅</span>
+    </div>
+  </div>
+
+  <div class="section-title">✦ سجل الدخول اليوم</div>
   <div class="attendee-list" id="attendee-list">
-    <div class="empty-state">لا يوجد مسجلون بعد</div>
+    <div class="empty-state">لم يتم فحص أي تذكرة بعد</div>
   </div>
 
 </div>
 
 <script>
-  let scanning = false;
-  let lastScan = '';
-  let lastScanTime = 0;
+  function checkURLParams() {
+    const params = new URLSearchParams(window.location.search);
+    const id    = params.get('id');
+    const name  = params.get('name');
+    const email = params.get('email');
+    const phone = params.get('phone');
+    const city  = params.get('city');
+    const paid  = params.get('paid');
 
-  // ── Load stats ──
-  function loadStats() {
+    if(!id) return; // No QR scanned, just show instructions
+
+    const card = document.getElementById('result-card');
+    const box  = document.getElementById('instruction-box');
+    box.style.display = 'none';
+    card.style.display = 'block';
+
     const scanned = JSON.parse(localStorage.getItem('scanned_tickets') || '{}');
-    const count = Object.keys(scanned).length;
-    document.getElementById('stat-checked').textContent = count;
-    document.getElementById('stat-total').textContent = count;
-    document.getElementById('stat-pending').textContent = '—';
-    document.getElementById('scan-count').textContent = count + ' دخول';
-    renderList(scanned);
-  }
+    const total   = JSON.parse(localStorage.getItem('total_scans') || '0');
+    localStorage.setItem('total_scans', parseInt(total) + 1);
 
-  function renderList(scanned) {
-    const list = document.getElementById('attendee-list');
-    const entries = Object.entries(scanned);
-    if(!entries.length) {
-      list.innerHTML = '<div class="empty-state">لم يتم مسح أي تذكرة بعد</div>';
+    // Invalid ticket
+    if(!name || !email || paid !== 'true') {
+      card.classList.add('invalid');
+      document.getElementById('result-icon').textContent = '❌';
+      document.getElementById('result-title').textContent = 'تذكرة غير صالحة';
+      document.getElementById('result-details').innerHTML = `
+        <div class="result-row"><span class="k">الحالة</span><span class="v" style="color:#EF9A9A">هذه التذكرة غير معتمدة</span></div>`;
+      updateStats();
       return;
     }
-    list.innerHTML = entries.reverse().map(([id, time]) => `
+
+    // Already scanned
+    if(scanned[id]) {
+      card.classList.add('already');
+      document.getElementById('result-icon').textContent = '⚠️';
+      document.getElementById('result-title').textContent = 'مسحت مسبقاً!';
+      document.getElementById('result-details').innerHTML = `
+        <div class="result-row"><span class="k">الاسم</span><span class="v">${name}</span></div>
+        <div class="result-row"><span class="k">وقت الدخول</span><span class="v">${scanned[id]}</span></div>
+        <div class="result-row"><span class="k">⚠️ تنبيه</span><span class="v" style="color:var(--gold)">استُخدمت من قبل!</span></div>`;
+      updateStats();
+      return;
+    }
+
+    // ✅ Valid!
+    const time = new Date().toLocaleTimeString('ar');
+    scanned[id] = time;
+    localStorage.setItem('scanned_tickets', JSON.stringify(scanned));
+
+    const names = JSON.parse(localStorage.getItem('scanned_names') || '[]');
+    names.unshift({ name, email, phone, city, time });
+    localStorage.setItem('scanned_names', JSON.stringify(names));
+
+    card.classList.add('valid');
+    document.getElementById('result-icon').textContent = '✅';
+    document.getElementById('result-title').textContent = 'أهلاً وسهلاً! ✓';
+    document.getElementById('result-details').innerHTML = `
+      <div class="result-row"><span class="k">الاسم</span><span class="v">${name}</span></div>
+      <div class="result-row"><span class="k">البريد</span><span class="v">${email}</span></div>
+      <div class="result-row"><span class="k">الهاتف</span><span class="v">${phone || '—'}</span></div>
+      ${city ? `<div class="result-row"><span class="k">المدينة</span><span class="v">${city}</span></div>` : ''}
+      <div class="result-row"><span class="k">وقت الدخول</span><span class="v">${time}</span></div>`;
+
+    if(navigator.vibrate) navigator.vibrate([50,30,50]);
+    updateStats();
+    renderList();
+  }
+
+  function clearResult() {
+    window.location.href = window.location.pathname; // Remove URL params
+  }
+
+  function updateStats() {
+    const scanned = JSON.parse(localStorage.getItem('scanned_tickets') || '{}');
+    const total   = parseInt(localStorage.getItem('total_scans') || '0');
+    const count   = Object.keys(scanned).length;
+    document.getElementById('stat-checked').textContent = count;
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('scan-count').textContent = count + ' دخول';
+  }
+
+  function renderList() {
+    const names = JSON.parse(localStorage.getItem('scanned_names') || '[]');
+    const list  = document.getElementById('attendee-list');
+    if(!names.length) {
+      list.innerHTML = '<div class="empty-state">لم يتم فحص أي تذكرة بعد</div>';
+      return;
+    }
+    list.innerHTML = names.map(e => `
       <div class="attendee-item">
         <div>
-          <div class="name" style="font-family:monospace;font-size:0.75rem">${id}</div>
-          <div class="time">✓ ${time}</div>
+          <div class="name">${e.name}</div>
+          <div class="time">✓ ${e.time}</div>
         </div>
         <span class="badge checked">دخل</span>
       </div>`).join('');
   }
 
-  // ── Camera ──
-  async function startCamera() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment', width:{ideal:1280}, height:{ideal:720} }
-      });
-      const video = document.getElementById('video');
-      video.srcObject = stream;
-      await video.play();
-      scanning = true;
-      document.getElementById('cam-status').textContent = '🔍 جاري المسح...';
-      document.getElementById('start-btn').textContent = '⏹ إيقاف الكاميرا';
-      document.getElementById('start-btn').onclick = stopCamera;
-      requestAnimationFrame(scanFrame);
-    } catch(err) {
-      document.getElementById('cam-status').textContent = '❌ تعذر الوصول للكاميرا';
-      alert('تعذر الوصول للكاميرا. تأكد من منح الإذن.');
-    }
-  }
-
-  function stopCamera() {
-    scanning = false;
-    const video = document.getElementById('video');
-    if(video.srcObject) video.srcObject.getTracks().forEach(t => t.stop());
-    document.getElementById('cam-status').textContent = 'الكاميرا متوقفة';
-    document.getElementById('start-btn').textContent = '📷 تشغيل الكاميرا للمسح';
-    document.getElementById('start-btn').onclick = startCamera;
-  }
-
-  function scanFrame() {
-    if(!scanning) return;
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    if(video.readyState === video.HAVE_ENOUGH_DATA) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height, { inversionAttempts:'dontInvert' });
-      if(code) {
-        // Pause scanning immediately
-        scanning = false;
-        document.getElementById('cam-status').textContent = '✅ تم المسح — اضغط للمتابعة';
-        processQR(code.data);
-        return;
-      }
-    }
-    requestAnimationFrame(scanFrame);
-  }
-
-  function resumeScanning() {
-    const card = document.getElementById('result-card');
-    card.style.display = 'none';
-    scanning = true;
-    document.getElementById('cam-status').textContent = '🔍 جاري المسح...';
-    requestAnimationFrame(scanFrame);
-  }
-
-  // ── Process QR ──
-  function processQR(data) {
-    const card = document.getElementById('result-card');
-    card.className = 'result-card';
-
-    const nextBtn = `<button onclick="resumeScanning()" style="width:100%;margin-top:16px;padding:14px;background:rgba(201,168,76,0.15);border:1.5px solid var(--gold);border-radius:12px;font-family:'Tajawal',sans-serif;font-size:1rem;font-weight:700;color:var(--gold);cursor:pointer;">
-      📷 مسح الشخص التالي
-    </button>`;
-
-    // Try to parse QR data
-    let parsed;
-    try {
-      parsed = JSON.parse(data);
-    } catch(e) {
-      // Not valid JSON
-      card.style.display = 'block';
-      card.classList.add('invalid');
-      document.getElementById('result-icon').textContent = '❌';
-      document.getElementById('result-title').textContent = 'رمز غير صالح';
-      document.getElementById('result-details').innerHTML = `
-        <div class="result-row"><span class="k">الحالة</span><span class="v" style="color:#EF9A9A">هذا ليس رمز تذكرة صالح</span></div>
-        ${nextBtn}`;
-      vibrate([100,50,100,50,100]);
-      return;
-    }
-
-    // Check if it has the required fields
-    if(!parsed.name || !parsed.email || !parsed.id) {
-      card.style.display = 'block';
-      card.classList.add('invalid');
-      document.getElementById('result-icon').textContent = '❌';
-      document.getElementById('result-title').textContent = 'تذكرة غير صالحة';
-      document.getElementById('result-details').innerHTML = `
-        <div class="result-row"><span class="k">الحالة</span><span class="v" style="color:#EF9A9A">لا تحتوي على بيانات مسجل</span></div>
-        ${nextBtn}`;
-      vibrate([100,50,100,50,100]);
-      return;
-    }
-
-    // Check if already scanned (stored locally on THIS scanner device)
-    const scanned = JSON.parse(localStorage.getItem('scanned_tickets') || '{}');
-
-    card.style.display = 'block';
-
-    if(scanned[parsed.id]) {
-      card.classList.add('already');
-      document.getElementById('result-icon').textContent = '⚠️';
-      document.getElementById('result-title').textContent = 'تم المسح مسبقاً!';
-      document.getElementById('result-details').innerHTML = `
-        <div class="result-row"><span class="k">الاسم</span><span class="v">${parsed.name}</span></div>
-        <div class="result-row"><span class="k">وقت الدخول</span><span class="v">${scanned[parsed.id]}</span></div>
-        <div class="result-row"><span class="k">تحذير</span><span class="v" style="color:var(--gold)">هذه التذكرة استُخدمت بالفعل</span></div>
-        ${nextBtn}`;
-      vibrate([200,100,200]);
-      return;
-    }
-
-    // Valid — mark as scanned
-    const checkInTime = new Date().toLocaleTimeString('ar');
-    scanned[parsed.id] = checkInTime;
-    localStorage.setItem('scanned_tickets', JSON.stringify(scanned));
-
-    card.classList.add('valid');
-    document.getElementById('result-icon').textContent = '✓';
-    document.getElementById('result-title').textContent = 'أهلاً! تم التحقق ✓';
-    document.getElementById('result-details').innerHTML = `
-      <div class="result-row"><span class="k">الاسم</span><span class="v">${parsed.name}</span></div>
-      <div class="result-row"><span class="k">البريد</span><span class="v" style="direction:ltr;text-align:left;font-size:0.8rem">${parsed.email}</span></div>
-      <div class="result-row"><span class="k">الهاتف</span><span class="v" style="direction:ltr">${parsed.phone || '—'}</span></div>
-      ${parsed.city ? `<div class="result-row"><span class="k">المدينة</span><span class="v">${parsed.city}</span></div>` : ''}
-      <div class="result-row"><span class="k">الفعالية</span><span class="v">${parsed.event || '—'}</span></div>
-      <div class="result-row"><span class="k">وقت الدخول</span><span class="v">${checkInTime}</span></div>
-      ${nextBtn}`;
-    vibrate([50,30,50]);
-    loadStats();
-  }
-
-  function vibrate(pattern) {
-    if(navigator.vibrate) navigator.vibrate(pattern);
-  }
-
-  // ── Init ──
-  loadStats();
-  setInterval(loadStats, 5000);
+  updateStats();
+  renderList();
+  checkURLParams();
 </script>
 
 </body>

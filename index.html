@@ -914,34 +914,70 @@
 
   // ── Download QR ──
   function downloadQR() {
-    const canvas = document.querySelector('#qrcode canvas');
-    if(!canvas) { alert('الرجاء الانتظار حتى يتم إنشاء رمز QR'); return; }
+    // Wait a moment to ensure QR is fully rendered
+    setTimeout(() => {
+      const canvas = document.querySelector('#qrcode canvas');
+      if(!canvas) {
+        alert('الرجاء الانتظار ثوانٍ ثم حاول مجدداً');
+        return;
+      }
 
-    // Create download canvas with white background and label
-    const dl = document.createElement('canvas');
-    dl.width = 300; dl.height = 360;
-    const ctx = dl.getContext('2d');
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, 300, 360);
+      const ticketId = document.getElementById('ticket-id').textContent;
+      const fullName = formData.fname + ' ' + formData.lname;
 
-    // Draw QR
-    ctx.drawImage(canvas, 40, 50, 220, 220);
+      const dl = document.createElement('canvas');
+      dl.width = 320; dl.height = 420;
+      const ctx = dl.getContext('2d');
 
-    // Add text
-    ctx.fillStyle = '#0D3B2E';
-    ctx.font = 'bold 13px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('كيفية تربية أطفالك', 150, 30);
-    ctx.font = '11px Arial';
-    ctx.fillStyle = '#666';
-    ctx.fillText(document.getElementById('ticket-id').textContent, 150, 300);
-    ctx.fillText('15 مايو 2026 — هامبورغ', 150, 320);
-    ctx.fillText(formData.fname + ' ' + formData.lname, 150, 345);
+      // White background
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, 320, 420);
 
-    const a = document.createElement('a');
-    a.download = 'ticket-' + document.getElementById('ticket-id').textContent + '.png';
-    a.href = dl.toDataURL('image/png');
-    a.click();
+      // Green header bar
+      ctx.fillStyle = '#0D3B2E';
+      ctx.fillRect(0, 0, 320, 55);
+
+      // Header text (LTR safe — use simple latin fallback for canvas)
+      ctx.fillStyle = '#C9A84C';
+      ctx.font = 'bold 13px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Islamic Parenting Event — 2026', 160, 25);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '11px Arial';
+      ctx.fillText('Hamburg — 15 May 2026 — 15:00', 160, 45);
+
+      // Draw QR code in center
+      ctx.drawImage(canvas, 50, 70, 220, 220);
+
+      // Divider
+      ctx.strokeStyle = '#EEEEEE';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(20, 305); ctx.lineTo(300, 305);
+      ctx.stroke();
+
+      // Attendee info (ASCII-safe)
+      ctx.fillStyle = '#333333';
+      ctx.font = 'bold 13px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(fullName, 160, 330);
+
+      ctx.font = '11px Arial';
+      ctx.fillStyle = '#666666';
+      ctx.fillText(formData.email, 160, 350);
+      ctx.fillText(formData.phone, 160, 368);
+
+      // Ticket ID
+      ctx.fillStyle = '#999999';
+      ctx.font = '10px monospace';
+      ctx.fillText(ticketId, 160, 400);
+
+      // Download
+      const a = document.createElement('a');
+      a.download = 'ticket-' + ticketId + '.png';
+      a.href = dl.toDataURL('image/png');
+      a.click();
+    }, 500);
   }
 </script>
 

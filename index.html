@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>كيفية تربية أطفالك وفقاً للتقاليد الإسلامية</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dark: #8B6914;
+    --green-deep: #0D3B2E;
+    --green-mid: #1A5C42;
+    --green-light: #2E7D55;
+    --cream: #F9F3E8;
+    --cream-dark: #EDE4D0;
+    --text-dark: #1A1A1A;
+    --text-mid: #4A4A4A;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--green-deep);
+    color: var(--cream);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Geometric background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(201,168,76,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(46,125,85,0.2) 0%, transparent 60%),
+      repeating-linear-gradient(
+        60deg,
+        transparent,
+        transparent 80px,
+        rgba(201,168,76,0.03) 80px,
+        rgba(201,168,76,0.03) 81px
+      ),
+      repeating-linear-gradient(
+        -60deg,
+        transparent,
+        transparent 80px,
+        rgba(201,168,76,0.03) 80px,
+        rgba(201,168,76,0.03) 81px
+      );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 50px;
+    animation: fadeDown 0.9s ease both;
+  }
+
+  .header .bismillah {
+    font-family: 'Amiri', serif;
+    font-size: 2rem;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+    opacity: 0.9;
+  }
+
+  .header .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .header .ornament-line {
+    height: 1px;
+    width: 80px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .header .ornament-diamond {
+    width: 10px;
+    height: 10px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  .header h1 {
+    font-family: 'Amiri', serif;
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.5;
+    color: var(--cream);
+    margin-bottom: 16px;
+  }
+
+  .header h1 span {
+    color: var(--gold);
+  }
+
+  .header .subtitle {
+    font-size: 1rem;
+    color: rgba(249,243,232,0.7);
+    font-weight: 300;
+    line-height: 1.8;
+    max-width: 560px;
+    margin: 0 auto 28px;
+  }
+
+  /* ── Event info pills ── */
+  .event-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-size: 0.88rem;
+    color: var(--gold-light);
+    font-weight: 500;
+  }
+
+  .pill svg { width: 15px; height: 15px; fill: var(--gold); flex-shrink: 0; }
+
+  /* ── Price badge ── */
+  .price-badge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border-radius: 16px;
+    padding: 14px 32px;
+    margin-top: 8px;
+  }
+
+  .price-badge .amount {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--green-deep);
+    line-height: 1;
+  }
+
+  .price-badge .label {
+    font-size: 0.75rem;
+    color: var(--green-deep);
+    font-weight: 600;
+    opacity: 0.8;
+    margin-top: 2px;
+  }
+
+  /* ── Card ── */
+  .card {
+    background: rgba(249,243,232,0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 24px;
+    padding: 40px;
+    animation: fadeUp 0.9s ease 0.2s both;
+  }
+
+  .card-title {
+    font-family: 'Amiri', serif;
+    font-size: 1.5rem;
+    color: var(--gold);
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(201,168,76,0.4), transparent);
+  }
+
+  /* ── Steps indicator ── */
+  .steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 36px;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+  }
+
+  .step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid rgba(201,168,76,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: rgba(201,168,76,0.5);
+    transition: all 0.4s ease;
+    background: rgba(201,168,76,0.05);
+  }
+
+  .step.active .step-circle {
+    border-color: var(--gold);
+    color: var(--green-deep);
+    background: var(--gold);
+    box-shadow: 0 0 20px rgba(201,168,76,0.4);
+  }
+
+  .step.done .step-circle {
+    border-color: var(--green-light);
+    background: var(--green-light);
+    color: white;
+  }
+
+  .step-label {
+    font-size: 0.72rem;
+    color: rgba(249,243,232,0.5);
+    white-space: nowrap;
+  }
+
+  .step.active .step-label { color: var(--gold); }
+  .step.done .step-label { color: var(--green-light); }
+
+  .step-connector {
+    width: 60px;
+    height: 2px;
+    background: rgba(201,168,76,0.2);
+    margin: 0 4px;
+    margin-bottom: 22px;
+    transition: background 0.4s ease;
+  }
+
+  .step-connector.done { background: var(--green-light); }
+
+  /* ── Form ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gold-light);
+    letter-spacing: 0.02em;
+  }
+
+  label span { color: rgba(201,168,76,0.5); margin-right: 3px; }
+
+  input, select, textarea {
+    width: 100%;
+    background: rgba(13,59,46,0.6);
+    border: 1.5px solid rgba(201,168,76,0.2);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    color: var(--cream);
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+    text-align: right;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: rgba(249,243,232,0.3);
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--gold);
+    background: rgba(13,59,46,0.8);
+    box-shadow: 0 0 0 4px rgba(201,168,76,0.1);
+  }
+
+  input.error { border-color: #E57373; }
+
+  .error-msg {
+    font-size: 0.75rem;
+    color: #E57373;
+    display: none;
+  }
+
+  .error-msg.show { display: block; }
+
+  select option { background: var(--green-deep); color: var(--cream); }
+
+  /* ── Submit button ── */
+  .btn-primary {
+    width: 100%;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    border: none;
+    border-radius: 14px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--green-deep);
+    cursor: pointer;
+    margin-top: 28px;
+    transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 0.03em;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(201,168,76,0.4); }
+  .btn-primary:hover::before { opacity: 1; }
+  .btn-primary:active { transform: translateY(0); }
+
+  /* ── Payment section ── */
+  #payment-section { display: none; }
+
+  .payment-summary {
+    background: rgba(13,59,46,0.5);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 28px;
+  }
+
+  .payment-summary h3 {
+    font-family: 'Amiri', serif;
+    color: var(--gold);
+    font-size: 1.1rem;
+    margin-bottom: 16px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    font-size: 0.9rem;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+  .summary-row .key { color: rgba(249,243,232,0.6); }
+  .summary-row .val { color: var(--cream); font-weight: 600; }
+  .summary-row.total .val { color: var(--gold); font-size: 1.2rem; }
+
+  #paypal-button-container { min-height: 50px; }
+
+  /* ── QR section ── */
+  #qr-section { display: none; text-align: center; }
+
+  .success-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--green-light), var(--green-mid));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    box-shadow: 0 0 40px rgba(46,125,85,0.5);
+    animation: pulse 2s ease infinite;
+  }
+
+  .success-icon svg { width: 40px; height: 40px; fill: white; }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 40px rgba(46,125,85,0.5); }
+    50% { box-shadow: 0 0 60px rgba(46,125,85,0.8); }
+  }
+
+  .success-title {
+    font-family: 'Amiri', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .success-subtitle {
+    color: rgba(249,243,232,0.7);
+    font-size: 0.95rem;
+    margin-bottom: 36px;
+    line-height: 1.8;
+  }
+
+  .qr-wrapper {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    background: var(--white);
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    margin-bottom: 28px;
+  }
+
+  .qr-label {
+    font-family: 'Amiri', serif;
+    font-size: 1rem;
+    color: var(--green-deep);
+    font-weight: 700;
+  }
+
+  .qr-id {
+    font-size: 0.72rem;
+    color: rgba(13,59,46,0.5);
+    letter-spacing: 0.1em;
+    font-family: monospace;
+  }
+
+  #qrcode canvas, #qrcode img {
+    border-radius: 8px;
+  }
+
+  .attendee-card {
+    background: rgba(13,59,46,0.5);
+    border: 1px solid rgba(201,168,76,0.2);
+    border-radius: 16px;
+    padding: 20px 28px;
+    margin-bottom: 24px;
+    text-align: right;
+  }
+
+  .attendee-card .row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(201,168,76,0.08);
+    font-size: 0.88rem;
+  }
+
+  .attendee-card .row:last-child { border-bottom: none; }
+  .attendee-card .row .k { color: rgba(249,243,232,0.5); }
+  .attendee-card .row .v { color: var(--cream); font-weight: 600; }
+
+  .btn-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 32px;
+    background: rgba(201,168,76,0.15);
+    border: 1.5px solid var(--gold);
+    border-radius: 12px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gold);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-download:hover {
+    background: rgba(201,168,76,0.25);
+    transform: translateY(-2px);
+  }
+
+  /* ── Footer note ── */
+  .footer-note {
+    text-align: center;
+    margin-top: 40px;
+    font-size: 0.78rem;
+    color: rgba(249,243,232,0.35);
+    line-height: 2;
+    animation: fadeUp 1s ease 0.5s both;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-transition {
+    animation: fadeUp 0.5s ease both;
+  }
+
+  /* ── Islamic pattern strip ── */
+  .pattern-strip {
+    height: 4px;
+    background: linear-gradient(90deg,
+      var(--green-deep) 0%,
+      var(--gold-dark) 20%,
+      var(--gold) 50%,
+      var(--gold-dark) 80%,
+      var(--green-deep) 100%
+    );
+    border-radius: 2px;
+    margin-bottom: 40px;
+    animation: shimmer 3s ease infinite;
+    background-size: 200% 100%;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  @media (max-width: 580px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    .card { padding: 24px 20px; }
+    .step-connector { width: 30px; }
+    .steps { gap: 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-line" style="background: linear-gradient(270deg, transparent, var(--gold), transparent);"></div>
+    </div>
+    <h1>كيفية تربية أطفالك<br><span>وفقاً للتقاليد الإسلامية</span></h1>
+    <p class="subtitle">
+      أمسية مميزة للآباء والأمهات — نستعرض معاً كيف تكون القيم الإسلامية دليلنا في تربية أبنائنا بأسلوب عملي وقريب من الواقع
+    </p>
+
+    <div class="event-pills">
+      <div class="pill">
+        <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+        الجمعة، 15 مايو 2026
+      </div>
+      <div class="pill">
+        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+        الساعة 15:00
+      </div>
+      <div class="pill">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        هامبورغ، ألمانيا
+      </div>
+    </div>
+
+    <div class="price-badge">
+      <span class="amount">25 €</span>
+      <span class="label">سعر التذكرة</span>
+    </div>
+  </header>
+
+  <div class="pattern-strip"></div>
+
+  <!-- Main card -->
+  <div class="card">
+
+    <!-- Steps -->
+    <div class="steps">
+      <div class="step active" id="step1">
+        <div class="step-circle">١</div>
+        <div class="step-label">البيانات</div>
+      </div>
+      <div class="step-connector" id="conn1"></div>
+      <div class="step" id="step2">
+        <div class="step-circle">٢</div>
+        <div class="step-label">الدفع</div>
+      </div>
+      <div class="step-connector" id="conn2"></div>
+      <div class="step" id="step3">
+        <div class="step-circle">٣</div>
+        <div class="step-label">تذكرتك</div>
+      </div>
+    </div>
+
+    <!-- ── STEP 1: Form ── -->
+    <div id="form-section">
+      <div class="card-title">✦ بيانات التسجيل</div>
+
+      <form id="reg-form" novalidate>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>الاسم الأول <span>*</span></label>
+            <input type="text" id="fname" placeholder="محمد" autocomplete="given-name">
+            <span class="error-msg" id="fname-err">الرجاء إدخال الاسم الأول</span>
+          </div>
+
+          <div class="form-group">
+            <label>اسم العائلة <span>*</span></label>
+            <input type="text" id="lname" placeholder="الأحمد" autocomplete="family-name">
+            <span class="error-msg" id="lname-err">الرجاء إدخال اسم العائلة</span>
+          </div>
+
+          <div class="form-group full">
+            <label>البريد الإلكتروني <span>*</span></label>
+            <input type="email" id="email" placeholder="example@email.com" autocomplete="email" style="text-align:left; direction:ltr;">
+            <span class="error-msg" id="email-err">الرجاء إدخال بريد إلكتروني صحيح</span>
+          </div>
+
+          <div class="form-group">
+            <label>رقم الهاتف <span>*</span></label>
+            <input type="tel" id="phone" placeholder="+49 123 456 789" autocomplete="tel" style="text-align:left; direction:ltr;">
+            <span class="error-msg" id="phone-err">الرجاء إدخال رقم هاتف</span>
+          </div>
+
+          <div class="form-group">
+            <label>المدينة</label>
+            <input type="text" id="city" placeholder="هامبورغ">
+          </div>
+
+          <div class="form-group">
+            <label>عدد الأطفال</label>
+            <select id="children">
+              <option value="">اختر...</option>
+              <option value="0">لا أطفال (حتى الآن)</option>
+              <option value="1">طفل واحد</option>
+              <option value="2">طفلان</option>
+              <option value="3">٣ أطفال</option>
+              <option value="4+">٤ أطفال أو أكثر</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>الجنس</label>
+            <select id="gender">
+              <option value="">اختر...</option>
+              <option value="male">ذكر</option>
+              <option value="female">أنثى</option>
+              <option value="prefer_not">أفضل عدم الإفصاح</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>كيف عرفت عن الفعالية؟</label>
+            <select id="source">
+              <option value="">اختر...</option>
+              <option value="whatsapp">واتساب</option>
+              <option value="instagram">إنستغرام</option>
+              <option value="friend">عن طريق صديق</option>
+              <option value="mosque">المسجد</option>
+              <option value="other">أخرى</option>
+            </select>
+          </div>
+
+          <div class="form-group full">
+            <label>ملاحظات أو أسئلة (اختياري)</label>
+            <textarea id="notes" rows="3" placeholder="هل لديك احتياجات خاصة أو أسئلة مسبقة؟"></textarea>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn-primary">
+          المتابعة إلى الدفع ←
+        </button>
+      </form>
+    </div>
+
+    <!-- ── STEP 2: Payment ── -->
+    <div id="payment-section">
+      <div class="card-title">✦ إتمام الدفع</div>
+
+      <div class="payment-summary">
+        <h3>ملخص التسجيل</h3>
+        <div class="summary-row">
+          <span class="key">الاسم</span>
+          <span class="val" id="sum-name">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="key">البريد الإلكتروني</span>
+          <span class="val" id="sum-email">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="key">الفعالية</span>
+          <span class="val">تربية الأطفال إسلامياً</span>
+        </div>
+        <div class="summary-row">
+          <span class="key">التاريخ</span>
+          <span class="val">15 مايو 2026</span>
+        </div>
+        <div class="summary-row total">
+          <span class="key">المبلغ الإجمالي</span>
+          <span class="val">25.00 €</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="goToPayPal()">
+        💳 الدفع عبر PayPal — 25 €
+      </button>
+
+      <button onclick="showSection('form-section'); setStep(1);" style="width:100%;padding:12px;background:transparent;border:1px solid rgba(201,168,76,0.2);border-radius:12px;font-family:'Tajawal',sans-serif;font-size:0.9rem;color:rgba(249,243,232,0.5);cursor:pointer;margin-top:10px;">
+        ← تعديل البيانات
+      </button>
+
+      <div style="margin-top:16px;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:16px;text-align:center;">
+        <p style="font-size:0.82rem;color:rgba(249,243,232,0.6);line-height:2;">
+          🔒 ستنتقل إلى PayPal لإتمام الدفع بأمان<br>
+          بعد الدفع، ارجع إلى هذه الصفحة واضغط الزر أدناه
+        </p>
+        <button onclick="generateTicket()" style="margin-top:12px;padding:10px 24px;background:rgba(46,125,85,0.3);border:1px solid var(--green-light);border-radius:10px;font-family:'Tajawal',sans-serif;font-size:0.88rem;color:#A5D6A7;cursor:pointer;">
+          ✓ دفعت بالفعل — احصل على تذكرتي
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: QR Ticket ── -->
+    <div id="qr-section">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
+      <div class="success-title">تم التسجيل بنجاح! 🎉</div>
+      <p class="success-subtitle">
+        مبروك! تم تأكيد تسجيلك ودفعك بنجاح<br>
+        احتفظ برمز QR هذا — سيتم مسحه عند دخولك للفعالية
+      </p>
+
+      <div class="qr-wrapper">
+        <div class="qr-label">تذكرة دخول — كيفية تربية أطفالك</div>
+        <div id="qrcode"></div>
+        <div class="qr-id" id="ticket-id">—</div>
+      </div>
+
+      <div class="attendee-card" id="attendee-summary"></div>
+
+      <button class="btn-download" onclick="downloadQR()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        تحميل رمز QR
+      </button>
+    </div>
+
+  </div><!-- /card -->
+
+  <p class="footer-note">
+    للاستفسار: info@example.com &nbsp;|&nbsp; هذه الفعالية غير ربحية<br>
+    جميع الحقوق محفوظة © 2026
+  </p>
+
+</div><!-- /page-wrap -->
+
+<script>
+  // ── State ──
+  let formData = {};
+
+  // ── Step helpers ──
+  function setStep(n) {
+    [1,2,3].forEach(i => {
+      const s = document.getElementById('step'+i);
+      s.classList.remove('active','done');
+      if(i < n) s.classList.add('done');
+      if(i === n) s.classList.add('active');
+    });
+    [1,2].forEach(i => {
+      const c = document.getElementById('conn'+i);
+      c.classList.toggle('done', i < n);
+    });
+  }
+
+  function showSection(id) {
+    ['form-section','payment-section','qr-section'].forEach(s => {
+      const el = document.getElementById(s);
+      el.style.display = 'none';
+    });
+    const target = document.getElementById(id);
+    target.style.display = 'block';
+    target.classList.add('section-transition');
+  }
+
+  // ── Validation ──
+  function validate() {
+    let ok = true;
+    const fields = [
+      { id:'fname', errId:'fname-err', check: v => v.trim().length > 1 },
+      { id:'lname', errId:'lname-err', check: v => v.trim().length > 1 },
+      { id:'email', errId:'email-err', check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
+      { id:'phone', errId:'phone-err', check: v => v.trim().length > 5 },
+    ];
+    fields.forEach(f => {
+      const el = document.getElementById(f.id);
+      const err = document.getElementById(f.errId);
+      if(!f.check(el.value)) {
+        el.classList.add('error');
+        err.classList.add('show');
+        ok = false;
+      } else {
+        el.classList.remove('error');
+        err.classList.remove('show');
+      }
+    });
+    return ok;
+  }
+
+  // ── Form submit ──
+  document.getElementById('reg-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if(!validate()) return;
+
+    formData = {
+      fname: document.getElementById('fname').value.trim(),
+      lname: document.getElementById('lname').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      city:  document.getElementById('city').value.trim(),
+      children: document.getElementById('children').value,
+      gender: document.getElementById('gender').value,
+      source: document.getElementById('source').value,
+      notes: document.getElementById('notes').value.trim(),
+    };
+
+    document.getElementById('sum-name').textContent = formData.fname + ' ' + formData.lname;
+    document.getElementById('sum-email').textContent = formData.email;
+
+    setStep(2);
+    showSection('payment-section');
+  });
+
+  // ── Redirect to PayPal ──
+  function goToPayPal() {
+    window.open('https://paypal.me/walidabbad/25', '_blank');
+  }
+
+  // ── Generate ticket & QR ──
+  function generateTicket() {
+    const ticketId = 'TKT-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,4).toUpperCase();
+    const ticketData = { ...formData, ticketId, paid: true, event: 'Islamic Parenting 2026', timestamp: new Date().toISOString() };
+
+    // Save to localStorage
+    const tickets = JSON.parse(localStorage.getItem('event_tickets') || '{}');
+    tickets[ticketId] = ticketData;
+    localStorage.setItem('event_tickets', JSON.stringify(tickets));
+
+    // Show QR section
+    setStep(3);
+    showSection('qr-section');
+
+    document.getElementById('ticket-id').textContent = ticketId;
+
+    // Generate QR — embed ALL data directly so scanner works on any device
+    document.getElementById('qrcode').innerHTML = '';
+    const qrPayload = JSON.stringify({
+      id: ticketId,
+      name: formData.fname + ' ' + formData.lname,
+      email: formData.email,
+      phone: formData.phone,
+      city: formData.city || '',
+      event: 'تربية الأطفال إسلامياً',
+      date: '15 مايو 2026',
+      paid: true
+    });
+    new QRCode(document.getElementById('qrcode'), {
+      text: qrPayload,
+      width: 220, height: 220,
+      colorDark: '#0D3B2E', colorLight: '#FFFFFF',
+      correctLevel: QRCode.CorrectLevel.L
+    });
+
+    // Attendee summary
+    const children_map = {'':'—','0':'لا أطفال','1':'طفل واحد','2':'طفلان','3':'٣ أطفال','4+':'٤+'}
+    document.getElementById('attendee-summary').innerHTML = `
+      <div class="row"><span class="k">الاسم الكامل</span><span class="v">${formData.fname} ${formData.lname}</span></div>
+      <div class="row"><span class="k">البريد الإلكتروني</span><span class="v" style="direction:ltr;text-align:left">${formData.email}</span></div>
+      <div class="row"><span class="k">رقم الهاتف</span><span class="v" style="direction:ltr;text-align:left">${formData.phone}</span></div>
+      ${formData.city ? `<div class="row"><span class="k">المدينة</span><span class="v">${formData.city}</span></div>` : ''}
+      <div class="row"><span class="k">رقم التذكرة</span><span class="v" style="font-family:monospace;font-size:0.8rem">${ticketId}</span></div>
+    `;
+  }
+
+  // ── Download QR ──
+  function downloadQR() {
+    const canvas = document.querySelector('#qrcode canvas');
+    if(!canvas) { alert('الرجاء الانتظار حتى يتم إنشاء رمز QR'); return; }
+
+    // Create download canvas with white background and label
+    const dl = document.createElement('canvas');
+    dl.width = 300; dl.height = 360;
+    const ctx = dl.getContext('2d');
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, 300, 360);
+
+    // Draw QR
+    ctx.drawImage(canvas, 40, 50, 220, 220);
+
+    // Add text
+    ctx.fillStyle = '#0D3B2E';
+    ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('كيفية تربية أطفالك', 150, 30);
+    ctx.font = '11px Arial';
+    ctx.fillStyle = '#666';
+    ctx.fillText(document.getElementById('ticket-id').textContent, 150, 300);
+    ctx.fillText('15 مايو 2026 — هامبورغ', 150, 320);
+    ctx.fillText(formData.fname + ' ' + formData.lname, 150, 345);
+
+    const a = document.createElement('a');
+    a.download = 'ticket-' + document.getElementById('ticket-id').textContent + '.png';
+    a.href = dl.toDataURL('image/png');
+    a.click();
+  }
+</script>
+
+</body>
+</html>

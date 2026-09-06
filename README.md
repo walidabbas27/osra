@@ -56,6 +56,44 @@ message written), or download the QR image to send as a picture.
 **7. At the door** — open `scan.html` on the scanning phone, paste the signing
 key once, and scan. Green admits, amber is already-used, red is a forgery.
 
+## Instant tickets (optional)
+
+Tick **Instant tickets** in the event form and the flow changes: people get
+their QR **the moment they register**, before you have checked anything. You
+confirm payments afterwards.
+
+That is a real trade, so be clear about it:
+
+- Normally the ticket *is* the proof — it only exists after you confirm payment,
+  and it cannot be forged.
+- In instant mode anyone who fills the form gets a ticket, so **the ticket no
+  longer proves payment. The door does.**
+
+The scanner then shows three states:
+
+| | Meaning |
+|---|---|
+| 🟢 Green | On your confirmed list — let them in |
+| 🔴 **PAYMENT NOT CONFIRMED** | Real registration, payment not checked — send them to you |
+| ❌ Red | Not a ticket for this event at all |
+
+**The door list is what makes this work.** In the console, press **Download
+door list**, and load that file onto the scanning phone (*Choose door list
+file*, or *Update door list* once running). It contains everyone you have ticked
+as paid. Export it again whenever you confirm more people — the scanner only
+shows green for codes in that file.
+
+Two things to brief door staff on:
+
+1. The red **PAYMENT NOT CONFIRMED** screen is not a glitch. It means send them
+   to the organiser. Waving those through is how you lose money.
+2. Load a fresh door list right before doors open, or people who paid that
+   morning will show as unconfirmed.
+
+Instant mode uses a **separate public key** to sign tickets, because the sign-up
+page has to do the signing itself. Your private key is never put in the sign-up
+link — the test suite checks this specifically.
+
 ## What you must know before relying on this
 
 **Everything lives in your browser.** No account, no server copy. Use

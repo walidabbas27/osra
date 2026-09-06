@@ -148,14 +148,57 @@
       quantity: values.quantity, ref: App.newRef(),
       eventName: ev.name, at: new Date().toISOString()
     };
+
+    // Instant mode: issue the ticket here and now, signed with the event's
+    // public key. It is only a claim to a seat until the organiser confirms
+    // the payment, which is why the door checks its own approved list.
+    if (ev.instantMode && ev.publicKey) {
+      registration.code = App.newCode();
+      App.buildQrString(ev.publicKey, {
+        code: registration.code, name: registration.name, quantity: registration.quantity
+      }).then(function (qr) {
+        registration.qr = qr;
+        App.save(STORE_KEY, registration);
+        showNextStep(ev, registration);
+      }).catch(function (err) {
+        document.getElementById('formErrors').innerHTML =
+          '<div class="notice notice--error"><strong>Could not create your ticket.</strong><span>'
+          + esc(err.message) + '</span></div>';
+      });
+      return;
+    }
+
     App.save(STORE_KEY, registration);
     showNextStep(ev, registration);
   }
 
   /** The registration code the organiser pastes into their console. */
   function buildCode(r) {
-    return 'REG1:' + App.encodeJson({
-      n: r.name, e: r.email, p: r.phone, q: r.quantity, r: r.ref
+    var payload = { n: r.name, e: r.email, p: r.phone, q: r.quantity, r: r.ref };
+    // Instant mode: the organiser must adopt the code their ticket was built
+    // around, otherwise the door list would never match what they present.
+    if (r.code) { payload.c = r.code; payload.k = r.qr; }
+    return 'REG1:' + App.encodeJson(payload);
+  }
+
+  /** Draws the already-issued ticket into the page, instant mode only. */
+  function renderInstantTicket(ev, r) {
+    var host = document.getElementById('instantTicket');
+    if (!host) return;
+
+    try {
+      QR.toCanvas(r.qr, { canvas: document.getElementById('instantQr'), scale: 6, margin: 4 });
+    } catch (err) {
+      host.innerHTML = '<div class="notice notice--error"><strong>Could not draw the QR code.</strong>'
+        + '<span>' + esc(err.message) + '</span></div>';
+      return;
+    }
+
+    document.getElementById('saveInstantQr').addEventListener('click', function (e) {
+      e.preventDefault();
+      document.getElementById('instantQr').toBlob(function (blob) {
+        App.download('ticket-' + r.code + '.png', blob);
+      });
     });
   }
 
@@ -191,7 +234,25 @@
     var mailHref = 'mailto:' + encodeURIComponent(ev.organiserEmail || '')
       + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
 
-    document.getElementById('signupCard').outerHTML = ''
+    // Instant mode hands over the ticket immediately, above everything else.
+    var instantBlock = r.qr
+      ? '<div class="card card--center" id="instantTicket">'
+        +   '<h2>Here is your ticket</h2>'
+        +   '<canvas id="instantQr" class="modal__qr" width="300" height="300"></canvas>'
+        +   '<div class="ticket__code">' + esc(r.code) + '</div>'
+        +   '<div class="ticket__meta"><span>' + esc(r.name) + '</span>'
+        +     '<span>Admits ' + r.quantity + '</span></div>'
+        +   '<p><a class="btn btn--primary btn--small" href="#" id="saveInstantQr">Save the QR image</a></p>'
+        +   '<div class="notice notice--warn">'
+        +     '<strong>Your place is not confirmed until your payment is checked.</strong>'
+        +     '<span>Send the payment with reference <code>' + esc(r.ref) + '</code> and send your '
+        +     'registration code below. Turning up without a confirmed payment means being sent '
+        +     'to the organiser at the door.</span>'
+        +   '</div>'
+        + '</div>'
+      : '';
+
+    document.getElementById('signupCard').outerHTML = instantBlock
       + '<div class="card">'
       +   '<h2>Almost there, ' + esc(r.name.split(' ')[0]) + '</h2>'
 
@@ -248,6 +309,8 @@
       try { localStorage.removeItem(STORE_KEY); } catch (err) { /* nothing to clear */ }
       render(ev);
     });
+
+    if (r.qr) renderInstantTicket(ev, r);
 
     document.getElementById('copyRef').addEventListener('click', function () {
       App.copyText(r.ref);

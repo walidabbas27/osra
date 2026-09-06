@@ -16,6 +16,8 @@
   var KEY_SECRET = 'ticketing.scan.secret';
   var KEY_EVENT = 'ticketing.scan.event';
   var KEY_LOG = 'ticketing.scan.checkins';
+  var KEY_INSTANT = 'ticketing.scan.instant';
+  var KEY_APPROVED = 'ticketing.scan.approved';
 
   var $ = function (sel) { return document.querySelector(sel); };
   var esc = App.escapeHtml;
@@ -33,6 +35,18 @@
   var eventName = App.load(KEY_EVENT, '');
   var checkIns = App.load(KEY_LOG, {});     // code -> { name, quantity, at, count }
 
+  // Instant mode: the ticket alone proves nothing, so the organiser's list of
+  // confirmed payments is the real authority at the door.
+  var instantMode = App.load(KEY_INSTANT, false);
+  var approved = App.load(KEY_APPROVED, []);
+  var approvedSet = {};
+  function rebuildApproved() {
+    approvedSet = {};
+    approved.forEach(function (code) { approvedSet[code] = true; });
+  }
+  rebuildApproved();
+
+  var scansUnconfirmed = 0;
   var stream = null, detector = null, scanning = false, busy = false;
   var lastPayload = '', lastAt = 0, pendingForce = null, beepCtx = null;
 
@@ -41,7 +55,8 @@
   function showScanner() {
     $('#setupCard').hidden = true;
     $('#scannerUi').hidden = false;
-    $('#eventLabel').textContent = eventName || 'This device only';
+    $('#eventLabel').textContent = (eventName || 'This device only')
+      + (instantMode ? ' · instant mode' : '');
     refreshCounts();
     renderRecent();
   }
@@ -58,6 +73,52 @@
     App.save(KEY_SECRET, secret);
     App.save(KEY_EVENT, eventName);
     showScanner();
+  });
+
+  function readDoorFile(file, onDone) {
+    var reader = new FileReader();
+    reader.onload = function () {
+      try {
+        var data = JSON.parse(reader.result);
+        if (!data.key) throw new Error('That file has no key in it.');
+
+        secret = data.key;
+        eventName = data.eventName || eventName;
+        instantMode = !!data.instantMode;
+        approved = Array.isArray(data.approved) ? data.approved : [];
+        rebuildApproved();
+
+        App.save(KEY_SECRET, secret);
+        App.save(KEY_EVENT, eventName);
+        App.save(KEY_INSTANT, instantMode);
+        App.save(KEY_APPROVED, approved);
+
+        onDone(approved.length);
+      } catch (err) {
+        alert('Could not read that door list: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  $('#loadDoorFile').addEventListener('click', function () { $('#doorFileInput').click(); });
+  $('#doorFileInput').addEventListener('change', function (e) {
+    if (!e.target.files[0]) return;
+    readDoorFile(e.target.files[0], function (n) {
+      showScanner();
+      alert('Door list loaded: ' + n + ' confirmed payment(s).');
+    });
+    e.target.value = '';
+  });
+
+  $('#reloadDoorFile').addEventListener('click', function () { $('#doorFileInput2').click(); });
+  $('#doorFileInput2').addEventListener('change', function (e) {
+    if (!e.target.files[0]) return;
+    readDoorFile(e.target.files[0], function (n) {
+      $('#eventLabel').textContent = (eventName || 'This device only') + (instantMode ? ' · instant mode' : '');
+      alert('Door list updated: ' + n + ' confirmed payment(s).');
+    });
+    e.target.value = '';
   });
 
   $('#forgetKey').addEventListener('click', function () {
@@ -113,7 +174,8 @@
     beep(tone);
     vibrate(tone);
 
-    var icon = { ok: '✅', duplicate: '⚠️', refused: '⛔', invalid: '❌' }[data.result] || '❓';
+    var icon = { ok: '✅', duplicate: '⚠️', refused: '⛔',
+                 unconfirmed: '💳', invalid: '❌' }[data.result] || '❓';
     resultEl.className = 'result result--' + data.result;
     resultEl.innerHTML =
       '<div class="result__icon">' + icon + '</div>' +
@@ -187,6 +249,20 @@
         return {
           result: 'invalid', title: 'Not a valid ticket',
           message: 'That code was not issued for this event, or the signing key on this device is wrong.'
+        };
+      }
+
+      // Instant mode: a valid signature only proves the ticket came from the
+      // sign-up page, which anyone can reach. Payment is what the door list
+      // records, so that is what decides.
+      if (instantMode && !approvedSet[ticket.code] && !force) {
+        scansUnconfirmed++;
+        return {
+          result: 'unconfirmed', name: ticket.name, quantity: ticket.quantity,
+          title: 'PAYMENT NOT CONFIRMED',
+          message: 'Do not admit. Send them to the organiser. If they have paid, '
+                   + 'confirm it and load an updated door list.',
+          canForce: true
         };
       }
 

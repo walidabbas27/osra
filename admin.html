@@ -105,6 +105,17 @@
         <span class="field__label">Payment instructions <span class="muted">(optional)</span></span>
         <textarea name="paymentNotice" rows="2" placeholder="Send as Friends &amp; Family and include your reference in the note."></textarea>
       </label>
+      <label class="check">
+        <input type="checkbox" name="instantMode" value="1">
+        <strong>Instant tickets</strong> &mdash; hand people their QR the moment they register,
+        and confirm their payment afterwards
+      </label>
+      <div class="notice notice--warn" id="instantBanner" hidden>
+        <strong>Instant mode is on.</strong>
+        <span>Anyone who fills in the form gets a ticket straight away, so the ticket by itself
+        no longer proves anyone paid. <strong>The door is your checkpoint:</strong> load the door
+        list onto the scanning phone, and only green means paid.</span>
+      </div>
       <button class="btn btn--primary" type="submit">Save event</button>
     </form>
   </section>
@@ -124,6 +135,14 @@
     <div class="modal__actions" style="justify-content:flex-start">
       <a class="btn btn--ghost btn--small" id="openSignup" href="index.html" target="_blank" rel="noopener">Preview it</a>
       <button class="btn btn--ghost btn--small" id="downloadEventJson" type="button">Download event.json</button>
+    </div>
+    <div id="doorFileRow" hidden>
+      <div class="notice notice--warn" style="margin-top:1rem">
+        <strong>Before doors open, load the door list onto the scanning phone.</strong>
+        <span>It lists everyone whose payment you have confirmed. Export it again any time you
+        tick more people off &mdash; the scanner only shows green for people on this list.</span>
+      </div>
+      <button class="btn btn--primary btn--small" id="downloadDoorFile" type="button">Download door list</button>
     </div>
     <p class="fineprint">Optional: commit <code>event.json</code> next to <code>index.html</code> in your
     repository and the plain site address works as the sign-up page, with no long link.</p>

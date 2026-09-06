@@ -387,3 +387,21 @@ textarea#regCode, textarea#codeBox {
   font-size: .78rem;
   word-break: break-all;
 }
+
+/* Instant mode: a ticket whose payment is not yet confirmed. Deliberately the
+   loudest state on the screen - mistaking it for "paid" is what costs money. */
+.result--unconfirmed {
+  background: #7f1d1d;
+  color: #fff;
+  border: 4px solid #fca5a5;
+  animation: unconfirmedPulse 1s ease-in-out 3;
+}
+.result--unconfirmed .result__title {
+  font-size: 1.5rem;
+  letter-spacing: .02em;
+}
+@keyframes unconfirmedPulse {
+  0%, 100% { background: #7f1d1d; }
+  50%      { background: #b91c1c; }
+}
+.log__res--unconfirmed { color: #fca5a5; font-weight: 700; }

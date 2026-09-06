@@ -8,6 +8,7 @@
   var KEY_EVENT = 'ticketing.event';
   var KEY_LIST = 'ticketing.attendees';
   var KEY_SECRET = 'ticketing.secret';
+  var KEY_PUBLIC = 'ticketing.publickey';
 
   var $ = function (sel) { return document.querySelector(sel); };
   var esc = App.escapeHtml;
@@ -16,10 +17,16 @@
     event: App.load(KEY_EVENT, {
       brand: '', name: '', tagline: '', startsAt: '', doorsAt: '', venue: '', address: '',
       price: 0, currency: 'USD', paymentLink: '', paymentLabel: 'Pay now', paymentNotice: '',
-      description: '', organiserEmail: '', maxPerPerson: 1
+      description: '', organiserEmail: '', maxPerPerson: 1, instantMode: false
     }),
     attendees: App.load(KEY_LIST, []),
-    secret: App.load(KEY_SECRET, null)
+    // Private. Signs tickets in the normal flow, and never leaves this device.
+    secret: App.load(KEY_SECRET, null),
+    // Public on purpose. In instant mode the sign-up page has to sign tickets
+    // itself, so this key travels inside the public link. It is deliberately a
+    // DIFFERENT key from the secret above, so publishing it can never let
+    // anyone forge a normal ticket.
+    publicKey: App.load(KEY_PUBLIC, null)
   };
 
   if (!window.crypto || !window.crypto.subtle) $('#cryptoWarning').hidden = false;
@@ -28,11 +35,21 @@
     state.secret = App.newSecret();
     App.save(KEY_SECRET, state.secret);
   }
+  if (!state.publicKey) {
+    state.publicKey = App.newSecret();
+    App.save(KEY_PUBLIC, state.publicKey);
+  }
 
   function persist() {
     App.save(KEY_EVENT, state.event);
     App.save(KEY_LIST, state.attendees);
     App.save(KEY_SECRET, state.secret);
+    App.save(KEY_PUBLIC, state.publicKey);
+  }
+
+  /** The key tickets are signed with, which depends on the mode. */
+  function signingKey() {
+    return state.event.instantMode ? state.publicKey : state.secret;
   }
 
   // ------------------------------------------------------------ event form
@@ -41,10 +58,15 @@
 
   function fillEventForm() {
     Object.keys(state.event).forEach(function (key) {
-      if (eventForm.elements[key]) eventForm.elements[key].value = state.event[key];
+      var field = eventForm.elements[key];
+      if (!field) return;
+      if (field.type === 'checkbox') field.checked = !!state.event[key];
+      else field.value = state.event[key];
     });
     $('#brandLabel').textContent = state.event.brand || 'Event ticketing';
     $('#secretValue').textContent = state.secret;
+    $('#instantBanner').hidden = !state.event.instantMode;
+    $('#doorFileRow').hidden = !state.event.instantMode;
     fillSignupLink();
   }
 
@@ -54,16 +76,23 @@
     return base + 'index.html#' + App.encodeJson(publicEvent());
   }
 
-  /** Only the fields attendees should see. The signing key never goes in here. */
+  /**
+   * Only the fields attendees should see. The private secret is never included
+   * here under any mode; in instant mode the separate public key is, because
+   * the sign-up page needs it to sign the ticket it hands out on the spot.
+   */
   function publicEvent() {
     var e = state.event;
-    return {
+    var out = {
       brand: e.brand, name: e.name, tagline: e.tagline, startsAt: e.startsAt, doorsAt: e.doorsAt,
       venue: e.venue, address: e.address, price: Number(e.price) || 0, currency: e.currency,
       description: e.description, paymentLink: e.paymentLink, paymentLabel: e.paymentLabel,
       paymentNotice: e.paymentNotice, organiserEmail: e.organiserEmail,
-      maxPerPerson: Math.max(1, parseInt(e.maxPerPerson, 10) || 1)
+      maxPerPerson: Math.max(1, parseInt(e.maxPerPerson, 10) || 1),
+      instantMode: !!e.instantMode
     };
+    if (e.instantMode) out.publicKey = state.publicKey;
+    return out;
   }
 
   function fillSignupLink() {
@@ -77,6 +106,8 @@
     e.preventDefault();
     var data = new FormData(eventForm);
     data.forEach(function (value, key) { state.event[key] = value; });
+    // Unchecked boxes are absent from FormData, so read them directly.
+    state.event.instantMode = eventForm.elements.instantMode.checked;
     state.event.price = Number(state.event.price) || 0;
     state.event.currency = (state.event.currency || 'USD').toUpperCase().slice(0, 3);
     persist();
@@ -95,6 +126,30 @@
   $('#downloadEventJson').addEventListener('click', function () {
     if (!state.event.name) { alert('Save your event first.'); return; }
     App.download('event.json', JSON.stringify(publicEvent(), null, 2), 'application/json');
+  });
+
+  /**
+   * The door file. In instant mode the ticket alone proves nothing, so the
+   * scanner needs the list of people whose payment you have confirmed. Rebuild
+   * and reload this whenever you tick more people off.
+   */
+  $('#downloadDoorFile').addEventListener('click', function () {
+    if (!state.event.name) { alert('Save your event first.'); return; }
+
+    var approved = state.attendees
+      .filter(function (a) { return a.paid; })
+      .map(function (a) { return a.code; });
+
+    App.download('door-list.json', JSON.stringify({
+      version: 1,
+      eventName: state.event.name,
+      instantMode: !!state.event.instantMode,
+      key: signingKey(),
+      approved: approved,
+      exportedAt: new Date().toISOString()
+    }, null, 2), 'application/json');
+
+    flash($('#downloadDoorFile'), approved.length + ' confirmed');
   });
 
   // ------------------------------------------------- registration codes
@@ -142,9 +197,10 @@
       email: String(reg.e || '').trim().toLowerCase(),
       phone: String(reg.p || '').trim(),
       quantity: Math.min(20, Math.max(1, parseInt(reg.q, 10) || 1)),
-      code: App.newCode(),
+      code: reg.c || App.newCode(),
       ref: reg.r || App.newRef(),
-      paid: false, issued: false, url: '', qr: '',
+      // Instant mode: they were handed the ticket at sign-up, so it already exists.
+      paid: false, issued: !!reg.c, url: reg.u || '', qr: reg.k || '',
       addedAt: new Date().toISOString()
     });
 
@@ -167,7 +223,11 @@
       : 'Generate a new signing key?';
     if (!confirm(warning)) return;
 
-    state.secret = App.newSecret();
+    if (state.event.instantMode) {
+      state.publicKey = App.newSecret();
+    } else {
+      state.secret = App.newSecret();
+    }
     // Previously issued tickets can no longer verify, so drop their links.
     state.attendees.forEach(function (a) { a.issued = false; a.url = ''; a.qr = ''; });
     persist();
@@ -210,7 +270,7 @@
 
   /** Signs a ticket and stores its link. Everything else is display. */
   function issueTicket(attendee) {
-    return App.buildQrString(state.secret, attendee)
+    return App.buildQrString(signingKey(), attendee)
       .then(function (qrString) {
         attendee.qr = qrString;
         attendee.url = App.buildTicketUrl(location.href, state.event, attendee, qrString);

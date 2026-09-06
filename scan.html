@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Door check-in</title>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>&#128247;</text></svg>">
+</head>
+<body class="body--scan">
+<div class="shell">
+
+  <header class="scanbar">
+    <div>
+      <div class="scanbar__brand">Door check-in</div>
+      <div class="scanbar__event" id="eventLabel">This device only</div>
+    </div>
+    <div class="scanbar__counts">
+      <span><b id="cIn">0</b> in</span>
+      <span><b id="cScans">0</b> scans</span>
+    </div>
+  </header>
+
+  <!-- Key setup, shown until this device holds the signing key -->
+  <section class="card" id="setupCard">
+    <h2>Set up this device</h2>
+    <p class="muted">Paste the signing key from the organiser console. It is stored on this
+    device only, so you do this once per phone.</p>
+    <form id="setupForm" class="form">
+      <label class="field">
+        <span class="field__label">Signing key</span>
+        <input name="secret" required autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Paste the key here">
+      </label>
+      <label class="field">
+        <span class="field__label">Event name <span class="muted">(optional, for the header)</span></span>
+        <input name="event" autocomplete="off">
+      </label>
+      <button class="btn btn--primary btn--block" type="submit">Start checking in</button>
+    </form>
+  </section>
+
+  <div class="scanner" id="scannerUi" hidden>
+    <div class="scanner__stage">
+      <video id="video" playsinline muted></video>
+      <canvas id="canvas" hidden></canvas>
+      <div class="scanner__reticle"></div>
+      <div class="scanner__hint" id="camHint">Tap &ldquo;Start camera&rdquo; below</div>
+    </div>
+
+    <div id="result" class="result result--idle">
+      <div class="result__icon">&#127903;</div>
+      <div class="result__title">Ready to scan</div>
+      <div class="result__body">Point the camera at an attendee's QR code.</div>
+    </div>
+
+    <div class="scanner__controls">
+      <button id="startBtn" class="btn btn--primary btn--block">Start camera</button>
+      <button id="stopBtn" class="btn btn--ghost btn--block" hidden>Stop camera</button>
+    </div>
+
+    <details class="manual">
+      <summary>Enter a code by hand</summary>
+      <p class="fineprint">Hand entry cannot check the signature &mdash; only the QR can. Use it when a
+      phone screen is cracked or too dim, and check the name matches.</p>
+      <form id="manualForm" class="form form--row">
+        <input id="manualCode" class="input" placeholder="20-character code" autocomplete="off" autocapitalize="characters" spellcheck="false">
+        <button class="btn btn--primary" type="submit">Check</button>
+      </form>
+    </details>
+
+    <div class="log">
+      <h2>Recent scans</h2>
+      <ul id="log" class="log__list"><li class="log__empty">Nothing scanned yet.</li></ul>
+    </div>
+
+    <div class="card">
+      <h2>This device</h2>
+      <p class="muted">Check-ins are stored on this device. If you scan on more than one phone,
+      export from each and merge them afterwards.</p>
+      <div class="modal__actions">
+        <button class="btn btn--ghost btn--small" id="exportLog" type="button">Export check-ins</button>
+        <button class="btn btn--danger btn--small" id="resetLog" type="button">Clear check-ins</button>
+        <button class="btn btn--ghost btn--small" id="forgetKey" type="button">Forget key</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script src="assets/jsQR.js"></script>
+<script src="assets/qr.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/scan.js"></script>
+</body>
+</html>

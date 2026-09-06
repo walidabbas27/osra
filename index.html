@@ -1,984 +1,164 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>كيفية تربية أطفالك وفقاً للتقاليد الإسلامية</title>
-<link href="https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
-
-
-
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Scheherazade+New:wght@400;700&family=Tajawal:wght@300;400;500;700;800&display=swap');
-
-  :root {
-    --ivory: #FAF7F2;
-    --ivory-dark: #F0EBE1;
-    --sand: #E8DFD0;
-    --teal: #1B6B74;
-    --teal-light: #2A8A95;
-    --teal-deep: #0F4A52;
-    --copper: #B87333;
-    --copper-light: #D4924A;
-    --copper-pale: #F2E4CC;
-    --charcoal: #2C2C2C;
-    --muted: #7A7066;
-    --white: #FFFFFF;
-    --shadow: rgba(27,107,116,0.15);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Tajawal', sans-serif;
-    background: var(--ivory);
-    color: var(--charcoal);
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ── Layered background ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 70% 50% at 0% 0%, rgba(27,107,116,0.08) 0%, transparent 55%),
-      radial-gradient(ellipse 60% 70% at 100% 100%, rgba(184,115,51,0.07) 0%, transparent 55%),
-      repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 40px,
-        rgba(27,107,116,0.015) 40px,
-        rgba(27,107,116,0.015) 41px
-      ),
-      repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 40px,
-        rgba(184,115,51,0.015) 40px,
-        rgba(184,115,51,0.015) 41px
-      );
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  .page-wrap {
-    position: relative;
-    z-index: 1;
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 50px 24px 80px;
-  }
-
-  /* ── Header ── */
-  .header {
-    text-align: center;
-    margin-bottom: 48px;
-    animation: fadeDown 0.9s ease both;
-  }
-
-  .header .bismillah {
-    font-family: 'Scheherazade New', serif;
-    font-size: 2.1rem;
-    color: var(--teal);
-    letter-spacing: 0.04em;
-    margin-bottom: 22px;
-    opacity: 0.88;
-  }
-
-  .header .ornament {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 26px;
-  }
-
-  .header .ornament-line {
-    height: 1px;
-    width: 80px;
-    background: linear-gradient(90deg, transparent, var(--copper), transparent);
-  }
-
-  .header .ornament-diamond {
-    width: 9px;
-    height: 9px;
-    background: var(--copper);
-    transform: rotate(45deg);
-    flex-shrink: 0;
-  }
-
-  .header h1 {
-    font-family: 'Scheherazade New', serif;
-    font-size: clamp(1.9rem, 5vw, 2.9rem);
-    font-weight: 700;
-    line-height: 1.5;
-    color: var(--charcoal);
-    margin-bottom: 16px;
-  }
-
-  .header h1 span {
-    color: var(--teal);
-  }
-
-  .header .subtitle {
-    font-size: 1rem;
-    color: var(--muted);
-    font-weight: 400;
-    line-height: 1.9;
-    max-width: 560px;
-    margin: 0 auto 28px;
-  }
-
-  /* ── Event info pills ── */
-  .event-pills {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-
-  .pill {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background: var(--white);
-    border: 1px solid var(--sand);
-    border-radius: 50px;
-    padding: 8px 18px;
-    font-size: 0.87rem;
-    color: var(--teal-deep);
-    font-weight: 600;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  }
-
-  .pill svg { width: 14px; height: 14px; fill: var(--copper); flex-shrink: 0; }
-
-  /* ── Price badge ── */
-  .price-badge {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    background: var(--teal-deep);
-    border-radius: 18px;
-    padding: 14px 36px;
-    margin-top: 8px;
-    box-shadow: 0 8px 28px rgba(15,74,82,0.3);
-  }
-
-  .price-badge .amount {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--copper-pale);
-    line-height: 1;
-  }
-
-  .price-badge .label {
-    font-size: 0.73rem;
-    color: rgba(242,228,204,0.7);
-    font-weight: 500;
-    margin-top: 3px;
-    letter-spacing: 0.04em;
-  }
-
-  /* ── Card ── */
-  .card {
-    background: var(--white);
-    border: 1px solid var(--sand);
-    border-radius: 28px;
-    padding: 44px;
-    animation: fadeUp 0.9s ease 0.2s both;
-    box-shadow: 0 4px 40px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-  }
-
-  .card-title {
-    font-family: 'Scheherazade New', serif;
-    font-size: 1.5rem;
-    color: var(--teal);
-    margin-bottom: 28px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .card-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(90deg, var(--sand), transparent);
-  }
-
-  /* ── Steps indicator ── */
-  .steps {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    margin-bottom: 36px;
-  }
-
-  .step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    position: relative;
-  }
-
-  .step-circle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: 2px solid var(--sand);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--muted);
-    transition: all 0.4s ease;
-    background: var(--ivory);
-  }
-
-  .step.active .step-circle {
-    border-color: var(--teal);
-    color: var(--white);
-    background: var(--teal);
-    box-shadow: 0 0 0 4px rgba(27,107,116,0.15);
-  }
-
-  .step.done .step-circle {
-    border-color: var(--copper);
-    background: var(--copper);
-    color: white;
-  }
-
-  .step-label {
-    font-size: 0.72rem;
-    color: var(--muted);
-    white-space: nowrap;
-    font-weight: 500;
-  }
-
-  .step.active .step-label { color: var(--teal); font-weight: 700; }
-  .step.done .step-label { color: var(--copper); }
-
-  .step-connector {
-    width: 60px;
-    height: 2px;
-    background: var(--sand);
-    margin: 0 4px;
-    margin-bottom: 22px;
-    transition: background 0.4s ease;
-  }
-
-  .step-connector.done { background: var(--copper); }
-
-  /* ── Form ── */
-  .form-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .form-group.full { grid-column: 1 / -1; }
-
-  label {
-    font-size: 0.84rem;
-    font-weight: 700;
-    color: var(--teal-deep);
-    letter-spacing: 0.02em;
-  }
-
-  label span { color: var(--copper-light); margin-right: 3px; }
-
-  input, select, textarea {
-    width: 100%;
-    background: var(--ivory);
-    border: 1.5px solid var(--sand);
-    border-radius: 12px;
-    padding: 13px 16px;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 0.95rem;
-    color: var(--charcoal);
-    outline: none;
-    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
-    text-align: right;
-  }
-
-  input::placeholder, textarea::placeholder {
-    color: rgba(44,44,44,0.3);
-  }
-
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--teal);
-    background: var(--white);
-    box-shadow: 0 0 0 4px rgba(27,107,116,0.1);
-  }
-
-  input.error { border-color: #D85A5A; }
-
-  .error-msg {
-    font-size: 0.75rem;
-    color: #C0392B;
-    display: none;
-  }
-
-  .error-msg.show { display: block; }
-
-  select option { background: var(--white); color: var(--charcoal); }
-
-  /* ── Submit button ── */
-  .btn-primary {
-    width: 100%;
-    padding: 16px 32px;
-    background: var(--teal-deep);
-    border: none;
-    border-radius: 14px;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--white);
-    cursor: pointer;
-    margin-top: 28px;
-    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
-    position: relative;
-    overflow: hidden;
-    letter-spacing: 0.03em;
-  }
-
-  .btn-primary::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(15,74,82,0.35); background: var(--teal); }
-  .btn-primary:hover::before { opacity: 1; }
-  .btn-primary:active { transform: translateY(0); }
-
-  /* ── Payment section ── */
-  #payment-section { display: none; }
-
-  .payment-summary {
-    background: var(--ivory);
-    border: 1px solid var(--sand);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 28px;
-  }
-
-  .payment-summary h3 {
-    font-family: 'Scheherazade New', serif;
-    color: var(--teal-deep);
-    font-size: 1.15rem;
-    margin-bottom: 16px;
-  }
-
-  .summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--sand);
-    font-size: 0.9rem;
-  }
-
-  .summary-row:last-child { border-bottom: none; }
-  .summary-row .key { color: var(--muted); }
-  .summary-row .val { color: var(--charcoal); font-weight: 600; }
-  .summary-row.total .val { color: var(--teal); font-size: 1.2rem; }
-
-  #paypal-button-container { min-height: 50px; }
-
-  /* ── QR section ── */
-  #qr-section { display: none; text-align: center; }
-
-  .success-icon {
-    width: 80px;
-    height: 80px;
-    background: var(--teal);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-    box-shadow: 0 0 0 8px rgba(27,107,116,0.12);
-    animation: pulse 2.5s ease infinite;
-  }
-
-  .success-icon svg { width: 40px; height: 40px; fill: white; }
-
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 8px rgba(27,107,116,0.12); }
-    50% { box-shadow: 0 0 0 14px rgba(27,107,116,0.06); }
-  }
-
-  .success-title {
-    font-family: 'Scheherazade New', serif;
-    font-size: 1.9rem;
-    color: var(--teal-deep);
-    margin-bottom: 8px;
-  }
-
-  .success-subtitle {
-    color: var(--muted);
-    font-size: 0.95rem;
-    margin-bottom: 36px;
-    line-height: 1.9;
-  }
-
-  .qr-wrapper {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    background: var(--white);
-    border: 1px solid var(--sand);
-    border-radius: 24px;
-    padding: 32px;
-    box-shadow: 0 12px 48px rgba(0,0,0,0.1);
-    margin-bottom: 28px;
-  }
-
-  .qr-label {
-    font-family: 'Scheherazade New', serif;
-    font-size: 1.05rem;
-    color: var(--teal-deep);
-    font-weight: 700;
-  }
-
-  .qr-id {
-    font-size: 0.72rem;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    font-family: monospace;
-  }
-
-  #qrcode canvas, #qrcode img {
-    border-radius: 8px;
-  }
-
-  .attendee-card {
-    background: var(--ivory);
-    border: 1px solid var(--sand);
-    border-radius: 16px;
-    padding: 20px 28px;
-    margin-bottom: 24px;
-    text-align: right;
-  }
-
-  .attendee-card .row {
-    display: flex;
-    justify-content: space-between;
-    padding: 9px 0;
-    border-bottom: 1px solid var(--ivory-dark);
-    font-size: 0.88rem;
-  }
-
-  .attendee-card .row:last-child { border-bottom: none; }
-  .attendee-card .row .k { color: var(--muted); }
-  .attendee-card .row .v { color: var(--charcoal); font-weight: 600; }
-
-  .btn-download {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 32px;
-    background: var(--copper-pale);
-    border: 1.5px solid var(--copper);
-    border-radius: 12px;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--copper);
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-    text-decoration: none;
-  }
-
-  .btn-download:hover {
-    background: #EDD4A6;
-    transform: translateY(-2px);
-  }
-
-  /* ── Footer note ── */
-  .footer-note {
-    text-align: center;
-    margin-top: 44px;
-    font-size: 0.78rem;
-    color: var(--muted);
-    opacity: 0.6;
-    line-height: 2;
-    animation: fadeUp 1s ease 0.5s both;
-  }
-
-  /* ── Animations ── */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .section-transition {
-    animation: fadeUp 0.5s ease both;
-  }
-
-  /* ── Pattern strip ── */
-  .pattern-strip {
-    height: 3px;
-    background: linear-gradient(90deg,
-      var(--ivory) 0%,
-      var(--copper) 25%,
-      var(--teal) 50%,
-      var(--copper) 75%,
-      var(--ivory) 100%
-    );
-    border-radius: 2px;
-    margin-bottom: 40px;
-    animation: shimmer 4s ease infinite;
-    background-size: 200% 100%;
-  }
-
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-
-  @media (max-width: 580px) {
-    .form-grid { grid-template-columns: 1fr; }
-    .form-group.full { grid-column: 1; }
-    .card { padding: 24px 18px; }
-    .step-connector { width: 30px; }
-    .steps { gap: 0; }
-  }
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Organiser console · Event ticketing</title>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>🎟️</text></svg>">
 </head>
 <body>
+<div class="shell shell--wide">
 
-<div class="page-wrap">
-
-  <!-- Header -->
-  <header class="header">
-    <div class="bismillah">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
-    <div class="ornament">
-      <div class="ornament-line"></div>
-      <div class="ornament-diamond"></div>
-      <div class="ornament-line" style="background: linear-gradient(270deg, transparent, var(--gold), transparent);"></div>
+  <header class="topbar">
+    <div>
+      <div class="topbar__brand" id="brandLabel">Event ticketing</div>
+      <h1 class="topbar__title">Organiser console</h1>
     </div>
-    <h1>كيفية تربية أطفالك<br><span>وفقاً للتقاليد الإسلامية</span></h1>
-    <p class="subtitle">
-      أمسية مميزة للآباء والأمهات — نستعرض معاً كيف تكون القيم الإسلامية دليلنا في تربية أبنائنا بأسلوب عملي وقريب من الواقع
-    </p>
-
-    <div class="event-pills">
-      <div class="pill">
-        <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
-        الجمعة، 15 مايو 2026
-      </div>
-      <div class="pill">
-        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-        الساعة 15:00
-      </div>
-      <div class="pill">
-        <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-        هامبورغ، ألمانيا
-      </div>
-    </div>
-
-    <div class="price-badge">
-      <span class="amount">25 €</span>
-      <span class="label">سعر التذكرة</span>
+    <div class="topbar__actions">
+      <a class="btn btn--ghost btn--small" href="scan.html">Door scanner</a>
+      <button class="btn btn--ghost btn--small" id="backupBtn" type="button">Backup</button>
+      <button class="btn btn--ghost btn--small" id="restoreBtn" type="button">Restore</button>
+      <input type="file" id="restoreFile" accept="application/json" hidden>
     </div>
   </header>
 
-  <div class="pattern-strip"></div>
+  <div id="cryptoWarning" class="notice notice--error" hidden>
+    <strong>This page needs a secure connection.</strong>
+    <span>Ticket signing uses the browser's crypto engine, which only works over
+    <code>https://</code> or <code>localhost</code>. Opening the file straight from disk will not work.</span>
+  </div>
 
-  <!-- Main card -->
-  <div class="card">
+  <div class="notice notice--warn">
+    <strong>Everything is stored in this browser.</strong>
+    <span>There is no server and no account. Use <strong>Backup</strong> before the event and keep the file
+    somewhere safe &mdash; clearing your browser data would otherwise lose the event.</span>
+  </div>
 
-    <!-- Steps -->
-    <div class="steps">
-      <div class="step active" id="step1">
-        <div class="step-circle">١</div>
-        <div class="step-label">البيانات</div>
+  <!-- ------------------------------------------------------------ event -->
+  <section class="card">
+    <h2>1. Your event</h2>
+    <form id="eventForm" class="form">
+      <div class="grid2">
+        <label class="field">
+          <span class="field__label">Organisation name</span>
+          <input name="brand" placeholder="My Events" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Event name</span>
+          <input name="name" placeholder="Harbour Lights Gala" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Date &amp; time</span>
+          <input name="startsAt" placeholder="Saturday 14 March 2026, 8:00 PM">
+        </label>
+        <label class="field">
+          <span class="field__label">Doors open</span>
+          <input name="doorsAt" placeholder="7:15 PM">
+        </label>
+        <label class="field">
+          <span class="field__label">Venue</span>
+          <input name="venue" placeholder="The Old Custom House">
+        </label>
+        <label class="field">
+          <span class="field__label">Address</span>
+          <input name="address" placeholder="1 Quay Street">
+        </label>
+        <label class="field">
+          <span class="field__label">Price per ticket</span>
+          <input name="price" type="number" step="0.01" min="0" value="0">
+        </label>
+        <label class="field">
+          <span class="field__label">Currency</span>
+          <input name="currency" value="USD" maxlength="3">
+        </label>
       </div>
-      <div class="step-connector" id="conn1"></div>
-      <div class="step" id="step2">
-        <div class="step-circle">٢</div>
-        <div class="step-label">الدفع</div>
-      </div>
-      <div class="step-connector" id="conn2"></div>
-      <div class="step" id="step3">
-        <div class="step-circle">٣</div>
-        <div class="step-label">تذكرتك</div>
+      <label class="field">
+        <span class="field__label">Payment link <span class="muted">(optional)</span></span>
+        <input name="paymentLink" type="url" placeholder="https://paypal.me/yourname">
+        <span class="field__hint">Shown on the payment instructions you send before issuing a ticket.</span>
+      </label>
+      <button class="btn btn--primary" type="submit">Save event</button>
+    </form>
+  </section>
+
+  <!-- ----------------------------------------------------------- secret -->
+  <section class="card">
+    <h2>2. Your signing key</h2>
+    <p class="muted">This key is what makes a ticket impossible to forge. It stays on your devices &mdash;
+    it is never put in a ticket, a link, or this website's code.</p>
+
+    <div class="refbox">
+      <span class="refbox__label">Signing key &mdash; copy this onto the scanning phone</span>
+      <strong class="refbox__code" id="secretValue">—</strong>
+      <button class="btn btn--ghost btn--small" id="copySecret" type="button">Copy</button>
+    </div>
+
+    <div class="notice notice--warn">
+      <strong>Do not change this key after sending tickets.</strong>
+      <span>Every ticket already issued would stop scanning. If you have not sent any yet, regenerating is safe.</span>
+    </div>
+    <button class="btn btn--danger btn--small" id="regenSecret" type="button">Generate a new key</button>
+  </section>
+
+  <!-- --------------------------------------------------------- attendees -->
+  <section class="card">
+    <h2>3. Attendees</h2>
+
+    <form id="attendeeForm" class="form form--row">
+      <input class="input" name="name" placeholder="Full name" required>
+      <input class="input" name="email" type="email" placeholder="Email (optional)">
+      <input class="input input--tiny" name="quantity" type="number" min="1" max="20" value="1" title="Tickets">
+      <button class="btn btn--primary" type="submit">Add</button>
+    </form>
+
+    <section class="stats">
+      <div class="stat"><span class="stat__label">Registered</span><span class="stat__value" id="cRegistered">0</span><span class="stat__sub">people on the list</span></div>
+      <div class="stat stat--ok"><span class="stat__label">Paid</span><span class="stat__value" id="cPaid">0</span><span class="stat__sub" id="cRevenue"></span></div>
+      <div class="stat stat--go"><span class="stat__label">Tickets issued</span><span class="stat__value" id="cIssued">0</span><span class="stat__sub">links created</span></div>
+      <div class="stat stat--warn"><span class="stat__label">Awaiting payment</span><span class="stat__value" id="cPending">0</span><span class="stat__sub">not yet confirmed</span></div>
+    </section>
+
+    <div class="toolbar">
+      <div class="toolbar__right">
+        <input id="search" class="input" type="search" placeholder="Search name or email…">
+        <button class="btn btn--ghost btn--small" id="exportCsv" type="button">Export CSV</button>
       </div>
     </div>
 
-    <!-- ── STEP 1: Form ── -->
-    <div id="form-section">
-      <div class="card-title">✦ بيانات التسجيل</div>
-
-      <form id="reg-form" novalidate>
-        <div class="form-grid">
-
-          <div class="form-group">
-            <label>الاسم الأول <span>*</span></label>
-            <input type="text" id="fname" placeholder="محمد" autocomplete="given-name">
-            <span class="error-msg" id="fname-err">الرجاء إدخال الاسم الأول</span>
-          </div>
-
-          <div class="form-group">
-            <label>اسم العائلة <span>*</span></label>
-            <input type="text" id="lname" placeholder="الأحمد" autocomplete="family-name">
-            <span class="error-msg" id="lname-err">الرجاء إدخال اسم العائلة</span>
-          </div>
-
-          <div class="form-group full">
-            <label>البريد الإلكتروني <span>*</span></label>
-            <input type="email" id="email" placeholder="example@email.com" autocomplete="email" style="text-align:left; direction:ltr;">
-            <span class="error-msg" id="email-err">الرجاء إدخال بريد إلكتروني صحيح</span>
-          </div>
-
-          <div class="form-group">
-            <label>رقم الهاتف <span>*</span></label>
-            <input type="tel" id="phone" placeholder="+49 123 456 789" autocomplete="tel" style="text-align:left; direction:ltr;">
-            <span class="error-msg" id="phone-err">الرجاء إدخال رقم هاتف</span>
-          </div>
-
-          <div class="form-group">
-            <label>المدينة</label>
-            <input type="text" id="city" placeholder="هامبورغ">
-          </div>
-
-          <div class="form-group">
-            <label>عدد الأطفال</label>
-            <select id="children">
-              <option value="">اختر...</option>
-              <option value="0">لا أطفال (حتى الآن)</option>
-              <option value="1">طفل واحد</option>
-              <option value="2">طفلان</option>
-              <option value="3">٣ أطفال</option>
-              <option value="4+">٤ أطفال أو أكثر</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>الجنس</label>
-            <select id="gender">
-              <option value="">اختر...</option>
-              <option value="male">ذكر</option>
-              <option value="female">أنثى</option>
-              <option value="prefer_not">أفضل عدم الإفصاح</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label>كيف عرفت عن الفعالية؟</label>
-            <select id="source">
-              <option value="">اختر...</option>
-              <option value="whatsapp">واتساب</option>
-              <option value="instagram">إنستغرام</option>
-              <option value="friend">عن طريق صديق</option>
-              <option value="mosque">المسجد</option>
-              <option value="other">أخرى</option>
-            </select>
-          </div>
-
-          <div class="form-group full">
-            <label>ملاحظات أو أسئلة (اختياري)</label>
-            <textarea id="notes" rows="3" placeholder="هل لديك احتياجات خاصة أو أسئلة مسبقة؟"></textarea>
-          </div>
-
-        </div>
-
-        <button type="submit" class="btn-primary">
-          المتابعة إلى الدفع ←
-        </button>
-      </form>
+    <div class="tablewrap">
+      <table class="table" id="attendeeTable">
+        <thead><tr>
+          <th>Attendee</th><th>Ref</th><th class="col-num">Qty</th>
+          <th>Paid</th><th>Ticket</th><th class="col-actions">Actions</th>
+        </tr></thead>
+        <tbody><tr><td colspan="6" class="empty">No attendees yet. Add the first one above.</td></tr></tbody>
+      </table>
     </div>
+  </section>
 
-    <!-- ── STEP 2: Payment ── -->
-    <div id="payment-section">
-      <div class="card-title">✦ إتمام الدفع</div>
+  <footer class="footer">
+    Static edition &middot; no server, no database &middot;
+    <a href="scan.html">Door scanner</a>
+  </footer>
+</div>
 
-      <div class="payment-summary">
-        <h3>ملخص التسجيل</h3>
-        <div class="summary-row">
-          <span class="key">الاسم</span>
-          <span class="val" id="sum-name">—</span>
-        </div>
-        <div class="summary-row">
-          <span class="key">البريد الإلكتروني</span>
-          <span class="val" id="sum-email">—</span>
-        </div>
-        <div class="summary-row">
-          <span class="key">الفعالية</span>
-          <span class="val">تربية الأطفال إسلامياً</span>
-        </div>
-        <div class="summary-row">
-          <span class="key">التاريخ</span>
-          <span class="val">15 مايو 2026</span>
-        </div>
-        <div class="summary-row total">
-          <span class="key">المبلغ الإجمالي</span>
-          <span class="val">25.00 €</span>
-        </div>
-      </div>
-
-      <button class="btn-primary" onclick="goToPayPal()">
-        💳 الدفع عبر PayPal — 25 €
-      </button>
-
-      <button onclick="showSection('form-section'); setStep(1);" style="width:100%;padding:12px;background:transparent;border:1px solid var(--sand);border-radius:12px;font-family:'Tajawal',sans-serif;font-size:0.9rem;color:var(--muted);cursor:pointer;margin-top:10px;">
-        ← تعديل البيانات
-      </button>
-
-      <div style="margin-top:16px;background:rgba(27,107,116,0.06);border:1px solid rgba(27,107,116,0.15);border-radius:12px;padding:16px;text-align:center;">
-        <p style="font-size:0.82rem;color:var(--muted);line-height:2;">
-          🔒 ستنتقل إلى PayPal لإتمام الدفع بأمان<br>
-          بعد الدفع، ارجع إلى هذه الصفحة واضغط الزر أدناه
-        </p>
-        <button onclick="generateTicket()" style="margin-top:12px;padding:10px 24px;background:rgba(27,107,116,0.1);border:1px solid var(--teal);border-radius:10px;font-family:'Tajawal',sans-serif;font-size:0.88rem;color:var(--teal);cursor:pointer;">
-          ✓ دفعت بالفعل — احصل على تذكرتي
-        </button>
-      </div>
+<!-- QR preview -->
+<div class="modal" id="qrModal" hidden>
+  <div class="modal__box">
+    <h2 id="qrTitle">Ticket</h2>
+    <canvas id="qrCanvas" class="modal__qr"></canvas>
+    <p class="modal__code" id="qrCode"></p>
+    <div class="modal__actions">
+      <button class="btn btn--primary btn--small" id="qrDownload" type="button">Download QR</button>
+      <button class="btn btn--ghost btn--small" id="qrClose" type="button">Close</button>
     </div>
+  </div>
+</div>
 
-    <!-- ── STEP 3: QR Ticket ── -->
-    <div id="qr-section">
-      <div class="success-icon">
-        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-      </div>
-      <div class="success-title">تم التسجيل بنجاح! 🎉</div>
-      <p class="success-subtitle">
-        مبروك! تم تأكيد تسجيلك ودفعك بنجاح<br>
-        احتفظ برمز QR هذا — سيتم مسحه عند دخولك للفعالية
-      </p>
-
-      <div class="qr-wrapper">
-        <div class="qr-label">تذكرة دخول — كيفية تربية أطفالك</div>
-        <div id="qrcode"></div>
-        <div class="qr-id" id="ticket-id">—</div>
-      </div>
-
-      <div class="attendee-card" id="attendee-summary"></div>
-
-      <button class="btn-download" onclick="downloadQR()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-        تحميل رمز QR
-      </button>
-    </div>
-
-  </div><!-- /card -->
-
-  <p class="footer-note">
-    للاستفسار: info@example.com &nbsp;|&nbsp; هذه الفعالية غير ربحية<br>
-    جميع الحقوق محفوظة © 2026
-  </p>
-
-</div><!-- /page-wrap -->
-
-<script>
-  // ── State ──
-  let formData = {};
-
-  // ── Step helpers ──
-  function setStep(n) {
-    [1,2,3].forEach(i => {
-      const s = document.getElementById('step'+i);
-      s.classList.remove('active','done');
-      if(i < n) s.classList.add('done');
-      if(i === n) s.classList.add('active');
-    });
-    [1,2].forEach(i => {
-      const c = document.getElementById('conn'+i);
-      c.classList.toggle('done', i < n);
-    });
-  }
-
-  function showSection(id) {
-    ['form-section','payment-section','qr-section'].forEach(s => {
-      const el = document.getElementById(s);
-      el.style.display = 'none';
-    });
-    const target = document.getElementById(id);
-    target.style.display = 'block';
-    target.classList.add('section-transition');
-  }
-
-  // ── Validation ──
-  function validate() {
-    let ok = true;
-    const fields = [
-      { id:'fname', errId:'fname-err', check: v => v.trim().length > 1 },
-      { id:'lname', errId:'lname-err', check: v => v.trim().length > 1 },
-      { id:'email', errId:'email-err', check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
-      { id:'phone', errId:'phone-err', check: v => v.trim().length > 5 },
-    ];
-    fields.forEach(f => {
-      const el = document.getElementById(f.id);
-      const err = document.getElementById(f.errId);
-      if(!f.check(el.value)) {
-        el.classList.add('error');
-        err.classList.add('show');
-        ok = false;
-      } else {
-        el.classList.remove('error');
-        err.classList.remove('show');
-      }
-    });
-    return ok;
-  }
-
-  // ── Form submit ──
-  document.getElementById('reg-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    if(!validate()) return;
-
-    formData = {
-      fname: document.getElementById('fname').value.trim(),
-      lname: document.getElementById('lname').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      city:  document.getElementById('city').value.trim(),
-      children: document.getElementById('children').value,
-      gender: document.getElementById('gender').value,
-      source: document.getElementById('source').value,
-      notes: document.getElementById('notes').value.trim(),
-    };
-
-    document.getElementById('sum-name').textContent = formData.fname + ' ' + formData.lname;
-    document.getElementById('sum-email').textContent = formData.email;
-
-    setStep(2);
-    showSection('payment-section');
-  });
-
-  // ── Redirect to PayPal ──
-  function goToPayPal() {
-    window.open('https://paypal.me/walidabbad/25', '_blank');
-  }
-
-  // ── Generate ticket & QR ──
-  function generateTicket() {
-    const ticketId = 'TKT-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).substr(2,4).toUpperCase();
-
-    // Show QR section first
-    setStep(3);
-    showSection('qr-section');
-    document.getElementById('ticket-id').textContent = ticketId;
-
-    // Build URL with all attendee data as params
-    // When scanned by native camera → opens scanner.html with attendee info
-    const baseUrl = 'https://walidabbas27.github.io/osra/scanner.html';
-    const params = new URLSearchParams({
-      id: ticketId,
-      name: formData.fname + ' ' + formData.lname,
-      email: formData.email,
-      phone: formData.phone,
-      city: formData.city || '',
-      paid: 'true'
-    });
-    const ticketUrl = baseUrl + '?' + params.toString();
-
-    // Generate QR with the URL
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(ticketUrl)}&margin=10`;
-
-    const qrContainer = document.getElementById('qrcode');
-    qrContainer.innerHTML = '';
-    const img = document.createElement('img');
-    img.src = qrUrl;
-    img.width = 220;
-    img.height = 220;
-    img.style.borderRadius = '8px';
-    img.alt = 'QR Code';
-    img.id = 'qr-img';
-    img.onerror = () => {
-      qrContainer.innerHTML = '<p style="color:red;font-size:0.8rem;">تعذر تحميل رمز QR، تحقق من اتصالك بالإنترنت</p>';
-    };
-    qrContainer.appendChild(img);
-
-    // Attendee summary
-    document.getElementById('attendee-summary').innerHTML = `
-      <div class="row"><span class="k">الاسم الكامل</span><span class="v">${formData.fname} ${formData.lname}</span></div>
-      <div class="row"><span class="k">البريد الإلكتروني</span><span class="v" style="direction:ltr;text-align:left">${formData.email}</span></div>
-      <div class="row"><span class="k">رقم الهاتف</span><span class="v" style="direction:ltr;text-align:left">${formData.phone}</span></div>
-      ${formData.city ? `<div class="row"><span class="k">المدينة</span><span class="v">${formData.city}</span></div>` : ''}
-      <div class="row"><span class="k">رقم التذكرة</span><span class="v" style="font-family:monospace;font-size:0.8rem">${ticketId}</span></div>
-    `;
-  }
-
-  // ── Download QR ──
-  function downloadQR() {
-    const img = document.getElementById('qr-img');
-    if(!img) { alert('الرجاء الانتظار حتى يتم تحميل رمز QR'); return; }
-
-    // Draw onto canvas then download
-    const dl = document.createElement('canvas');
-    dl.width = 320; dl.height = 420;
-    const ctx = dl.getContext('2d');
-
-    // White background
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, 320, 420);
-
-    // Teal header
-    ctx.fillStyle = '#0F4A52';
-    ctx.fillRect(0, 0, 320, 55);
-    ctx.fillStyle = '#B87333';
-    ctx.font = 'bold 13px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Islamic Parenting Event — 2026', 160, 25);
-    ctx.fillStyle = '#FAF7F2';
-    ctx.font = '11px Arial';
-    ctx.fillText('Hamburg — 15 May 2026 — 15:00', 160, 45);
-
-    // Draw QR image
-    ctx.drawImage(img, 50, 65, 220, 220);
-
-    // Divider
-    ctx.strokeStyle = '#EEEEEE';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(20, 300); ctx.lineTo(300, 300);
-    ctx.stroke();
-
-    // Attendee info
-    const fullName = formData.fname + ' ' + formData.lname;
-    const ticketId = document.getElementById('ticket-id').textContent;
-    ctx.fillStyle = '#333333';
-    ctx.font = 'bold 13px Arial';
-    ctx.fillText(fullName, 160, 325);
-    ctx.font = '11px Arial';
-    ctx.fillStyle = '#666666';
-    ctx.fillText(formData.email, 160, 345);
-    ctx.fillText(formData.phone, 160, 363);
-    ctx.fillStyle = '#999999';
-    ctx.font = '9px monospace';
-    ctx.fillText(ticketId, 160, 395);
-
-    const a = document.createElement('a');
-    a.download = 'ticket-' + ticketId + '.png';
-    a.href = dl.toDataURL('image/png');
-    a.click();
-  }
-</script>
-
+<script src="assets/qr.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/organiser.js"></script>
 </body>
 </html>

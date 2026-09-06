@@ -1,3 +1,8 @@
+/* The hidden attribute must win over any display rule below. Without this,
+   a class like .modal { display: flex } keeps an element on screen even when
+   its .hidden property is true, and nothing can dismiss it. */
+[hidden] { display: none !important; }
+
 :root {
   --bg: #f6f7f9;
   --surface: #ffffff;

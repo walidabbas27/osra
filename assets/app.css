@@ -373,3 +373,17 @@ input:focus, select:focus, textarea:focus {
 @media (prefers-color-scheme: dark) {
   .modal__box { background: #1a1d23; }
 }
+
+.refbox__code--wrap {
+  word-break: break-all;
+  font-size: .72rem;
+  line-height: 1.4;
+  max-height: 4.5rem;
+  overflow-y: auto;
+}
+textarea#regCode, textarea#codeBox {
+  width: 100%;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .78rem;
+  word-break: break-all;
+}

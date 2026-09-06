@@ -14,8 +14,9 @@
 
   var state = {
     event: App.load(KEY_EVENT, {
-      brand: '', name: '', startsAt: '', doorsAt: '', venue: '', address: '',
-      price: 0, currency: 'USD', paymentLink: ''
+      brand: '', name: '', tagline: '', startsAt: '', doorsAt: '', venue: '', address: '',
+      price: 0, currency: 'USD', paymentLink: '', paymentLabel: 'Pay now', paymentNotice: '',
+      description: '', organiserEmail: '', maxPerPerson: 1
     }),
     attendees: App.load(KEY_LIST, []),
     secret: App.load(KEY_SECRET, null)
@@ -44,6 +45,32 @@
     });
     $('#brandLabel').textContent = state.event.brand || 'Event ticketing';
     $('#secretValue').textContent = state.secret;
+    fillSignupLink();
+  }
+
+  /** The public sign-up link, with the event details riding in the hash. */
+  function signupUrl() {
+    var base = location.href.replace(/[^/]*$/, '');
+    return base + 'index.html#' + App.encodeJson(publicEvent());
+  }
+
+  /** Only the fields attendees should see. The signing key never goes in here. */
+  function publicEvent() {
+    var e = state.event;
+    return {
+      brand: e.brand, name: e.name, tagline: e.tagline, startsAt: e.startsAt, doorsAt: e.doorsAt,
+      venue: e.venue, address: e.address, price: Number(e.price) || 0, currency: e.currency,
+      description: e.description, paymentLink: e.paymentLink, paymentLabel: e.paymentLabel,
+      paymentNotice: e.paymentNotice, organiserEmail: e.organiserEmail,
+      maxPerPerson: Math.max(1, parseInt(e.maxPerPerson, 10) || 1)
+    };
+  }
+
+  function fillSignupLink() {
+    var ready = !!state.event.name;
+    var url = ready ? signupUrl() : '';
+    $('#signupLink').textContent = ready ? url : 'Save your event first';
+    $('#openSignup').href = ready ? url : 'index.html';
   }
 
   eventForm.addEventListener('submit', function (e) {
@@ -59,6 +86,75 @@
   });
 
   // --------------------------------------------------------- signing key
+
+  $('#copySignup').addEventListener('click', function () {
+    if (!state.event.name) return;
+    App.copyText(signupUrl()).then(function () { flash($('#copySignup'), 'Copied'); });
+  });
+
+  $('#downloadEventJson').addEventListener('click', function () {
+    if (!state.event.name) { alert('Save your event first.'); return; }
+    App.download('event.json', JSON.stringify(publicEvent(), null, 2), 'application/json');
+  });
+
+  // ------------------------------------------------- registration codes
+
+  $('#codeForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var box = $('#regCode');
+    var errorBox = $('#codeError');
+    var raw = box.value.trim();
+    errorBox.innerHTML = '';
+
+    // Tolerate the code being pasted inside a whole forwarded email.
+    var match = raw.match(/REG1:[A-Za-z0-9_-]+/);
+    if (!match) {
+      errorBox.innerHTML = '<div class="notice notice--error"><strong>No registration code found.</strong>'
+        + '<span>Look for the line starting with <code>REG1:</code> and paste that.</span></div>';
+      return;
+    }
+
+    var reg;
+    try {
+      reg = App.decodeJson(match[0].slice('REG1:'.length));
+    } catch (err) {
+      errorBox.innerHTML = '<div class="notice notice--error"><strong>That code is damaged.</strong>'
+        + '<span>It was probably cut short. Ask them to send it again.</span></div>';
+      return;
+    }
+
+    if (!reg || !reg.n) {
+      errorBox.innerHTML = '<div class="notice notice--error"><strong>That code has no name in it.</strong></div>';
+      return;
+    }
+
+    var already = state.attendees.filter(function (a) { return a.ref === reg.r; })[0];
+    if (already) {
+      errorBox.innerHTML = '<div class="notice notice--warn"><strong>Already added.</strong>'
+        + '<span>' + esc(already.name) + ' is on the list with reference ' + esc(already.ref) + '.</span></div>';
+      box.value = '';
+      return;
+    }
+
+    state.attendees.unshift({
+      id: Date.now() + '-' + Math.random().toString(36).slice(2, 8),
+      name: String(reg.n).trim(),
+      email: String(reg.e || '').trim().toLowerCase(),
+      phone: String(reg.p || '').trim(),
+      quantity: Math.min(20, Math.max(1, parseInt(reg.q, 10) || 1)),
+      code: App.newCode(),
+      ref: reg.r || App.newRef(),
+      paid: false, issued: false, url: '', qr: '',
+      addedAt: new Date().toISOString()
+    });
+
+    box.value = '';
+    persist();
+    render();
+    errorBox.innerHTML = '<div class="notice notice--ok"><strong>Added ' + esc(reg.n) + '.</strong>'
+      + '<span>Tick <em>paid</em> once you have matched their payment to reference '
+      + esc(reg.r || '') + '.</span></div>';
+  });
 
   $('#copySecret').addEventListener('click', function () {
     App.copyText(state.secret).then(function () { flash($('#copySecret'), 'Copied'); });

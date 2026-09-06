@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Organiser console · Event ticketing</title>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='13' font-size='14'>🎟️</text></svg>">
+</head>
+<body>
+<div class="shell shell--wide">
+
+  <header class="topbar">
+    <div>
+      <div class="topbar__brand" id="brandLabel">Event ticketing</div>
+      <h1 class="topbar__title">Organiser console</h1>
+    </div>
+    <div class="topbar__actions">
+      <a class="btn btn--ghost btn--small" href="scan.html">Door scanner</a>
+      <button class="btn btn--ghost btn--small" id="backupBtn" type="button">Backup</button>
+      <button class="btn btn--ghost btn--small" id="restoreBtn" type="button">Restore</button>
+      <input type="file" id="restoreFile" accept="application/json" hidden>
+    </div>
+  </header>
+
+  <div id="cryptoWarning" class="notice notice--error" hidden>
+    <strong>This page needs a secure connection.</strong>
+    <span>Ticket signing uses the browser's crypto engine, which only works over
+    <code>https://</code> or <code>localhost</code>. Opening the file straight from disk will not work.</span>
+  </div>
+
+  <div class="notice notice--warn">
+    <strong>Everything is stored in this browser.</strong>
+    <span>There is no server and no account. Use <strong>Backup</strong> before the event and keep the file
+    somewhere safe &mdash; clearing your browser data would otherwise lose the event.</span>
+  </div>
+
+  <!-- ------------------------------------------------------------ event -->
+  <section class="card">
+    <h2>1. Your event</h2>
+    <form id="eventForm" class="form">
+      <div class="grid2">
+        <label class="field">
+          <span class="field__label">Organisation name</span>
+          <input name="brand" placeholder="My Events" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Event name</span>
+          <input name="name" placeholder="Harbour Lights Gala" required>
+        </label>
+        <label class="field">
+          <span class="field__label">Date &amp; time</span>
+          <input name="startsAt" placeholder="Saturday 14 March 2026, 8:00 PM">
+        </label>
+        <label class="field">
+          <span class="field__label">Doors open</span>
+          <input name="doorsAt" placeholder="7:15 PM">
+        </label>
+        <label class="field">
+          <span class="field__label">Venue</span>
+          <input name="venue" placeholder="The Old Custom House">
+        </label>
+        <label class="field">
+          <span class="field__label">Address</span>
+          <input name="address" placeholder="1 Quay Street">
+        </label>
+        <label class="field">
+          <span class="field__label">Price per ticket</span>
+          <input name="price" type="number" step="0.01" min="0" value="0">
+        </label>
+        <label class="field">
+          <span class="field__label">Currency</span>
+          <input name="currency" value="USD" maxlength="3">
+        </label>
+      </div>
+      <div class="grid2">
+        <label class="field">
+          <span class="field__label">Your email <span class="muted">(where registrations arrive)</span></span>
+          <input name="organiserEmail" type="email" placeholder="you@example.com">
+        </label>
+        <label class="field">
+          <span class="field__label">Max tickets per person</span>
+          <input name="maxPerPerson" type="number" min="1" max="20" value="1">
+        </label>
+      </div>
+      <label class="field">
+        <span class="field__label">Tagline <span class="muted">(optional)</span></span>
+        <input name="tagline" placeholder="An evening by the water">
+      </label>
+      <label class="field">
+        <span class="field__label">Payment link <span class="muted">(optional)</span></span>
+        <input name="paymentLink" type="url" placeholder="https://paypal.me/yourname">
+        <span class="field__hint">Attendees are sent here after filling in the form.</span>
+      </label>
+      <label class="field">
+        <span class="field__label">Payment button label</span>
+        <input name="paymentLabel" placeholder="Pay with PayPal">
+      </label>
+      <label class="field">
+        <span class="field__label">Description <span class="muted">(optional)</span></span>
+        <textarea name="description" rows="3" placeholder="What the event is, what's included, dress code…"></textarea>
+      </label>
+      <label class="field">
+        <span class="field__label">Payment instructions <span class="muted">(optional)</span></span>
+        <textarea name="paymentNotice" rows="2" placeholder="Send as Friends &amp; Family and include your reference in the note."></textarea>
+      </label>
+      <button class="btn btn--primary" type="submit">Save event</button>
+    </form>
+  </section>
+
+  <!-- ------------------------------------------------------- sign-up link -->
+  <section class="card">
+    <h2>2. Your sign-up page</h2>
+    <p class="muted">Share this link so people can register themselves. It carries the event
+    details, so it works for anyone who opens it &mdash; no server needed.</p>
+
+    <div class="refbox">
+      <span class="refbox__label">Public sign-up link</span>
+      <strong class="refbox__code refbox__code--wrap" id="signupLink">—</strong>
+      <button class="btn btn--ghost btn--small" id="copySignup" type="button">Copy</button>
+    </div>
+
+    <div class="modal__actions" style="justify-content:flex-start">
+      <a class="btn btn--ghost btn--small" id="openSignup" href="index.html" target="_blank" rel="noopener">Preview it</a>
+      <button class="btn btn--ghost btn--small" id="downloadEventJson" type="button">Download event.json</button>
+    </div>
+    <p class="fineprint">Optional: commit <code>event.json</code> next to <code>index.html</code> in your
+    repository and the plain site address works as the sign-up page, with no long link.</p>
+  </section>
+
+  <!-- ----------------------------------------------------------- secret -->
+  <section class="card">
+    <h2>3. Your signing key</h2>
+    <p class="muted">This key is what makes a ticket impossible to forge. It stays on your devices &mdash;
+    it is never put in a ticket, a link, or this website's code.</p>
+
+    <div class="refbox">
+      <span class="refbox__label">Signing key &mdash; copy this onto the scanning phone</span>
+      <strong class="refbox__code" id="secretValue">—</strong>
+      <button class="btn btn--ghost btn--small" id="copySecret" type="button">Copy</button>
+    </div>
+
+    <div class="notice notice--warn">
+      <strong>Do not change this key after sending tickets.</strong>
+      <span>Every ticket already issued would stop scanning. If you have not sent any yet, regenerating is safe.</span>
+    </div>
+    <button class="btn btn--danger btn--small" id="regenSecret" type="button">Generate a new key</button>
+  </section>
+
+  <!-- --------------------------------------------------------- attendees -->
+  <section class="card">
+    <h2>4. Attendees</h2>
+
+    <details class="manual" id="pasteBox">
+      <summary>Someone sent me a registration code</summary>
+      <p class="fineprint">Paste the code from their email or message. Their details are filled in
+      exactly as they typed them, so nothing gets mistyped.</p>
+      <form id="codeForm" class="form">
+        <textarea id="regCode" rows="3" placeholder="REG1:..." spellcheck="false"></textarea>
+        <button class="btn btn--primary" type="submit">Add this person</button>
+      </form>
+      <div id="codeError"></div>
+    </details>
+
+    <form id="attendeeForm" class="form form--row">
+      <input class="input" name="name" placeholder="Full name" required>
+      <input class="input" name="email" type="email" placeholder="Email (optional)">
+      <input class="input input--tiny" name="quantity" type="number" min="1" max="20" value="1" title="Tickets">
+      <button class="btn btn--primary" type="submit">Add</button>
+    </form>
+
+    <section class="stats">
+      <div class="stat"><span class="stat__label">Registered</span><span class="stat__value" id="cRegistered">0</span><span class="stat__sub">people on the list</span></div>
+      <div class="stat stat--ok"><span class="stat__label">Paid</span><span class="stat__value" id="cPaid">0</span><span class="stat__sub" id="cRevenue"></span></div>
+      <div class="stat stat--go"><span class="stat__label">Tickets issued</span><span class="stat__value" id="cIssued">0</span><span class="stat__sub">links created</span></div>
+      <div class="stat stat--warn"><span class="stat__label">Awaiting payment</span><span class="stat__value" id="cPending">0</span><span class="stat__sub">not yet confirmed</span></div>
+    </section>
+
+    <div class="toolbar">
+      <div class="toolbar__right">
+        <input id="search" class="input" type="search" placeholder="Search name or email…">
+        <button class="btn btn--ghost btn--small" id="exportCsv" type="button">Export CSV</button>
+      </div>
+    </div>
+
+    <div class="tablewrap">
+      <table class="table" id="attendeeTable">
+        <thead><tr>
+          <th>Attendee</th><th>Ref</th><th class="col-num">Qty</th>
+          <th>Paid</th><th>Ticket</th><th class="col-actions">Actions</th>
+        </tr></thead>
+        <tbody><tr><td colspan="6" class="empty">No attendees yet. Add the first one above.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="footer">
+    Static edition &middot; no server, no database &middot;
+    <a href="scan.html">Door scanner</a>
+  </footer>
+</div>
+
+<!-- QR preview -->
+<div class="modal" id="qrModal" hidden>
+  <div class="modal__box">
+    <h2 id="qrTitle">Ticket</h2>
+    <canvas id="qrCanvas" class="modal__qr"></canvas>
+    <p class="modal__code" id="qrCode"></p>
+    <div class="modal__actions">
+      <button class="btn btn--primary btn--small" id="qrDownload" type="button">Download QR</button>
+      <button class="btn btn--ghost btn--small" id="qrClose" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/qr.js"></script>
+<script src="assets/common.js"></script>
+<script src="assets/organiser.js"></script>
+</body>
+</html>
